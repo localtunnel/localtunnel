@@ -110,6 +110,12 @@ server.on('connection', function(socket) {
         if (!match) {
             // normal processing if not proxy
             var res = new ServerResponse(req);
+
+            // TODO(shtylman) skip favicon for now, it caused problems
+            if (req.url === '/favicon.ico') {
+                return;
+            }
+
             res.assignSocket(parser.socket);
             self.emit('request', req, res);
             return;
