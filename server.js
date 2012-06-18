@@ -225,10 +225,8 @@ server.on('connection', function(socket) {
 server.on('request', function(req, res) {
 
     // generate new shit for client
-    var id = 'asdf';
-    //rand_id();
-    //
-    //
+    var id = rand_id();
+
     if (wait_list[id]) {
         wait_list[id].forEach(function(waiting) {
             waiting.end();
