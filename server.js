@@ -4,6 +4,19 @@ var http = require('http');
 var net = require('net');
 var FreeList = require('freelist').FreeList;
 
+var argv = require('optimist')
+    .usage('Usage: $0 --port [num]')
+    .options('port', {
+        default: '80',
+        describe: 'listen on this port for outside requests'
+    })
+    .argv;
+
+if (argv.help) {
+    require('optimist').showHelp();
+    process.exit();
+}
+
 // here be dragons
 var HTTPParser = process.binding('http_parser').HTTPParser;
 var ServerResponse = http.ServerResponse;
@@ -230,9 +243,30 @@ server.on('connection', function(socket) {
 
 server.on('request', function(req, res) {
 
-    // generate new shit for client
-    var id = rand_id();
+    // ignore favicon
+    if (req.url === '/favicon.ico') {
+        res.writeHead(404);
+        return res.end();
+    }
 
+    var match = req.url.match(/\/([a-z]{4})?/);
+
+    // user can request a particular set of characters
+    // will be given if not already taken
+    // this is useful when the main server is restarted
+    // users can keep testing with their expected ids
+    var requested_id;
+    if (match && match[1]) {
+        requested_id = match[1];
+    }
+
+    var id = requested_id || rand_id();
+    if (wait_list[id]) {
+        // new id
+        id = rand_id();
+    }
+
+    // generate new shit for client
     if (wait_list[id]) {
         wait_list[id].forEach(function(waiting) {
             waiting.end();
@@ -247,7 +281,7 @@ server.on('request', function(req, res) {
         var url = 'http://' + id + '.' + req.headers.host;
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ url: url, port: port }));
+        res.end(JSON.stringify({ url: url, id: id, port: port }));
     });
 
     // user has 5 seconds to connect before their slot is given up
@@ -279,5 +313,7 @@ server.on('request', function(req, res) {
     });
 });
 
-server.listen(8000);
+server.listen(argv.port, function() {
+    log.info('server listening on port: %d', server.address().port);
+});
 

@@ -27,12 +27,15 @@ var opt = {
     json: true
 };
 
-opt.uri = 'http://' + opt.host + ':' + opt.port + opt.path;
+var base_uri = 'http://' + opt.host + ':' + opt.port + opt.path;
 
 var internal;
 var upstream;
+var prev_id;
 
 (function connect_proxy() {
+    opt.uri = base_uri + ((prev_id) ? prev_id : '');
+
     request(opt, function(err, res, body) {
         if (err) {
             console.error('upstream not available: %s', err.message);
@@ -43,6 +46,9 @@ var upstream;
         var port = body.port;
         var host = opt.host;
 
+        // store the id so we can try to get the same one
+        prev_id = body.id;
+
         console.log('your url is: %s', body.url);
 
         // connect to remote tcp server
@@ -52,6 +58,7 @@ var upstream;
         connect_internal();
 
         upstream.on('end', function() {
+            console.log('> upstream connection terminated');
 
             // sever connection to internal server
             // on reconnect we will re-establish
