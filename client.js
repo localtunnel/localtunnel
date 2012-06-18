@@ -35,7 +35,7 @@ var upstream;
 (function connect_proxy() {
     request(opt, function(err, res, body) {
         if (err) {
-            console.error('upstream not available: http status %d', res.statusCode);
+            console.error('upstream not available: %s', err.message);
             return process.exit(-1);
         }
 
