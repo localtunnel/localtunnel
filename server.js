@@ -118,6 +118,22 @@ server.on('connection', function(socket) {
         for_client = false;
 
         var hostname = req.headers.host;
+
+        if (!hostname) {
+            log.trace('no hostname: %j', req.headers);
+            // normal processing if not proxy
+            var res = new ServerResponse(req);
+
+            // TODO(shtylman) skip favicon for now, it caused problems
+            if (req.url === '/favicon.ico') {
+                return;
+            }
+
+            res.assignSocket(parser.socket);
+            self.emit('request', req, res);
+            return;
+        }
+
         var match = hostname.match(/^([a-z]{4})[.].*/);
 
         if (!match) {
