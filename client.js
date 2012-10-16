@@ -7,7 +7,7 @@ var argv = require('optimist')
     .usage('Usage: $0 --port [num]')
     .demand(['port'])
     .options('host', {
-        default: 'http://lt.defunctzombie.com',
+        default: 'http://localtunnel.me',
         describe: 'upstream server providing forwarding'
     })
     .describe('port', 'internal http server port')
