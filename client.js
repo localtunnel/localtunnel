@@ -34,7 +34,7 @@ var upstream;
 var prev_id;
 
 (function connect_proxy() {
-    opt.uri = base_uri + ((prev_id) ? prev_id : '');
+    opt.uri = base_uri + ((prev_id) ? prev_id : '?new');
 
     request(opt, function(err, res, body) {
         if (err) {

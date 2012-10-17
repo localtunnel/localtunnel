@@ -2,6 +2,7 @@
 // builtin
 var http = require('http');
 var net = require('net');
+var url = require('url');
 var FreeList = require('freelist').FreeList;
 
 var argv = require('optimist')
@@ -103,7 +104,6 @@ server.on('connection', function(socket) {
 
     var request;
 
-    //var parser = new HTTPParser(HTTPParser.REQUEST);
     var parser = parsers.alloc();
     parser.socket = socket;
     parser.reinitialize(HTTPParser.REQUEST);
@@ -263,6 +263,14 @@ server.on('request', function(req, res) {
     if (req.url === '/favicon.ico') {
         res.writeHead(404);
         return res.end();
+    }
+
+    var parsed = url.parse(req.url);
+
+    // redirect main page to github reference
+    if (req.url === '/' && !parsed.query.new) {
+        res.writeHead(301, { Location: 'http://shtylman.github.com/localtunnel/' });
+        res.end();
     }
 
     var match = req.url.match(/\/([a-z]{4})?/);
