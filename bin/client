@@ -1,2 +1,4 @@
 #!/usr/bin/env node
 require(__dirname + '/../client');
+
+// vim: ft=javascript
