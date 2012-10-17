@@ -8,7 +8,7 @@
     "url": "git://github.com/shtylman/localtunnel.git"
   },
   "dependencies": {
-    "request": "2.9.202",
+    "request": "2.11.4",
     "book": "1.2.0",
     "optimist": "0.3.4"
   },
