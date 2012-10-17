@@ -265,7 +265,7 @@ server.on('request', function(req, res) {
         return res.end();
     }
 
-    var parsed = url.parse(req.url);
+    var parsed = url.parse(req.url, true);
 
     // redirect main page to github reference
     if (req.url === '/' && !parsed.query.new) {
