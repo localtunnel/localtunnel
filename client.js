@@ -2,6 +2,8 @@
 var net = require('net');
 var url = require('url');
 var request = require('request');
+var eventEmitter = require('events').EventEmitter;
+var observer = new eventEmitter();
 
 var argv = require('optimist')
     .usage('Usage: $0 --port [num]')
@@ -34,6 +36,8 @@ var base_uri = 'http://' + opt.host + ':' + opt.port + opt.path;
 
 var prev_id = argv.subdomain || '';
 
+var exposedUrl = null;
+
 (function connect_proxy() {
     opt.uri = base_uri + ((prev_id) ? prev_id : '?new');
 
@@ -54,7 +58,8 @@ var prev_id = argv.subdomain || '';
 
         // store the id so we can try to get the same one
         prev_id = body.id;
-
+        exposedUrl = body.url;
+        observer.emit('newExposedUrl');
         console.log('your url is: %s', body.url);
 
         var count = 0;
@@ -116,4 +121,11 @@ function duplex(port, host, local_port, local_host) {
     return upstream;
 }
 
-
+module.exports = function(callback){
+  if(exposedUrl){
+    return callback(exposedUrl);
+  }
+  observer.once('newExposedUrl', function(){
+    callback(exposedUrl);
+  });
+}
