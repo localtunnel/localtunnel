@@ -1,4 +1,4 @@
-# localtunnel #
+# localtunnel [![Build Status](https://secure.travis-ci.org/shtylman/localtunnel.png)](http://travis-ci.org/shtylman/localtunnel) #
 
 localtunnel exposes your localhost to the world for easy testing and sharing! No need to mess with DNS or deploy just to have others test out your changes.
 
@@ -21,3 +21,28 @@ lt --port 8000
 Thats it! It will connect to the tunnel server, setup the tunnel, and tell you what url to use for your testing. This url will remain active for the duration of your session; so feel free to share it with others for happy fun time!
 
 You can restart your local server all you want, ```lt``` is smart enough to detect this and reconnect once it is back.
+
+## API ##
+
+The localtunnel client is also usable through an API (test integration, automation, etc)
+
+```javascript
+var lt_client = require('localtunnel').client;
+
+var client = lt_client.connect({
+    // the localtunnel server
+    host: 'http://localtunnel.com',
+    // your local application port
+    port: 12345
+});
+
+// when your are assigned a url
+client.on('url', function(url) {
+    // you can now make http requests to the url
+    // they will be proxied to your local server on port [12345]
+});
+
+client.on('error', function(err) {
+    // uh oh!
+});
+```

@@ -12,10 +12,16 @@
     "book": "1.2.0",
     "optimist": "0.3.4"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "mocha": "1.6.0"
+  },
   "optionalDependencies": {},
   "engines": {
     "node": "*"
+  },
+  "scripts": {
+    "test": "mocha --ui qunit -- test",
+    "start": "./bin/server"
   },
   "bin": {
     "lt": "./bin/client"

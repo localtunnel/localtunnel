@@ -1,4 +1,34 @@
 #!/usr/bin/env node
-require(__dirname + '/../client');
+var lt_client = require(__dirname + '/../client');
+
+var argv = require('optimist')
+    .usage('Usage: $0 --port [num]')
+    .demand(['port'])
+    .options('host', {
+        default: 'http://localtunnel.me',
+        describe: 'upstream server providing forwarding'
+    })
+    .options('subdomain', {
+        describe: 'request this subdomain'
+    })
+    .describe('port', 'internal http server port')
+    .argv;
+
+var opt = {
+    host: argv.host,
+    port: argv.port,
+    subdomain: argv.subdomain,
+}
+
+var client = lt_client.connect(opt);
+
+// only emitted when the url changes
+client.on('url', function(url) {
+    console.log('your url is: %s', url);
+});
+
+client.on('error', function(err) {
+    console.error(err);
+});
 
 // vim: ft=javascript
