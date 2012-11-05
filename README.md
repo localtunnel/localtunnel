@@ -2,7 +2,7 @@
 
 localtunnel exposes your localhost to the world for easy testing and sharing! No need to mess with DNS or deploy just to have others test out your changes.
 
-Great for working with browser testing tools like browserling or external api callback services like twilio which require a public url for callbacks!
+Great for working with browser testing tools like browserling or external api callback services like twilio which require a public url for callbacks.
 
 ## installation ##
 
@@ -12,7 +12,7 @@ npm install -g localtunnel
 
 ## use ##
 
-Super East! Assuming your local server is running on port 8000, just use the ```lt``` command to start the tunnel.
+Super Easy! Assuming your local server is running on port 8000, just use the ```lt``` command to start the tunnel.
 
 ```
 lt --port 8000
