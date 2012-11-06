@@ -7,6 +7,7 @@
     "type": "git",
     "url": "git://github.com/shtylman/localtunnel.git"
   },
+  "main" : "./client.js",
   "dependencies": {
     "request": "2.11.4",
     "book": "1.2.0",
