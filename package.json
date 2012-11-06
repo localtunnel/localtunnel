@@ -25,5 +25,6 @@
   },
   "bin": {
     "lt": "./bin/client"
-  }
+  },
+  "main": "./index.js"
 }
