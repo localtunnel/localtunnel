@@ -309,6 +309,11 @@ server.on('request', function(req, res) {
 
     var id = requested_id || rand_id();
 
+    // if the id already exists, this client must use something else
+    if (clients[id]) {
+        id = rand_id();
+    }
+
     // maximum number of tcp connections the client can setup
     // each tcp channel allows for more parallel requests
     var max_tcp_sockets = 4;
@@ -336,48 +341,61 @@ server.on('request', function(req, res) {
         }));
     });
 
+    var conn_timeout;
+
     // user has 5 seconds to connect before their slot is given up
-    var conn_timeout = setTimeout(function() {
-        client_server.close();
-    }, 5000);
+    function maybe_tcp_close() {
+        conn_timeout = setTimeout(function() {
+            client_server.close();
+        }, 5000);
+    }
+
+    maybe_tcp_close();
 
     // no longer accepting connections for this id
     client_server.on('close', function() {
+        log.trace('closed tcp socket for client(%s)', id);
+        clearTimeout(conn_timeout);
         delete clients[id];
     });
 
-    var count = 0;
     client_server.on('connection', function(socket) {
 
         // no more socket connections allowed
-        if (count++ >= max_tcp_sockets) {
+        if (client.sockets.length >= max_tcp_sockets) {
             return socket.end();
         }
 
         log.trace('new connection for id: %s', id);
 
-        // multiplexes socket data out to clients
-        socket.ondata = socketOnData;
-
         // no need to close the client server
         clearTimeout(conn_timeout);
 
-        // add socket to pool for this id
-        var idx = client.sockets.push(socket) - 1;
+        // multiplexes socket data out to clients
+        socket.ondata = socketOnData;
+
+        client.sockets.push(socket);
 
         socket.on('close', function(had_error) {
-            count--;
+            log.trace('client %s closed socket', id);
+
+            // remove this socket
+            var idx = client.sockets.indexOf(socket);
             client.sockets.splice(idx, 1);
+
+            log.trace('remaining client sockets: %s', client.sockets.length);
 
             // no more sockets for this ident
             if (client.sockets.length === 0) {
-                delete clients[id];
+                log.trace('all client(%s) sockets disconnected', id);
+                maybe_tcp_close();
             }
         });
 
         // close will be emitted after this
         socket.on('error', function(err) {
             log.error(err);
+            socket.end();
         });
     });
 

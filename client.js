@@ -123,6 +123,10 @@ var duplex = function(remote_host, remote_port, local_host, local_port) {
             }, 1000);
         });
 
+        internal.on('connect', function() {
+            console.log('connected to local server');
+        });
+
         upstream.pipe(internal).pipe(upstream);
     })();
 
