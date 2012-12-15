@@ -31,7 +31,7 @@ var lt_client = require('localtunnel').client;
 
 var client = lt_client.connect({
     // the localtunnel server
-    host: 'http://localtunnel.com',
+    host: 'http://localtunnel.me',
     // your local application port
     port: 12345
 });
