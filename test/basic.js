@@ -2,8 +2,8 @@ var http = require('http');
 var url = require('url');
 var assert = require('assert');
 
-var localtunnel_server = require('./').server;
-var localtunnel_client = require('./').client;
+var localtunnel_server = require('../').server();
+var localtunnel_client = require('../').client;
 
 test('setup localtunnel server', function(done) {
     localtunnel_server.listen(3000, function() {
@@ -91,5 +91,9 @@ test('request specific domain', function(done) {
     client.on('error', function(err) {
         console.error(err);
     });
+});
+
+test('shutdown', function() {
+    localtunnel_server.close();
 });
 

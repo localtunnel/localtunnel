@@ -30,24 +30,74 @@ var connect = function(opt) {
     var assigned_domain = opt.subdomain;
 
     // connect to upstream given connection parameters
-    var tunnel = function (remote_host, remote_port, max_conn) {
-        var count = 0;
+    var tunnel = function (remote_host, remote_port) {
 
-        // open 5 connections to the localtunnel server
-        // allows for resources to be served faster
-        for (var count = 0 ; count < max_conn ; ++count) {
-            var upstream = duplex(remote_host, remote_port, 'localhost', local_port);
-            upstream.once('end', function() {
-                // all upstream connections have been closed
-                if (--count <= 0) {
-                    tunnel(remote_host, remote_port, max_conn);
+        var remote_opt = {
+            host: remote_host,
+            port: remote_port
+        };
+
+        var local_opt = {
+            host: 'localhost',
+            port: local_port
+        };
+
+        var remote_attempts = 0;
+
+        (function conn(conn_had_error) {
+            if (conn_had_error) {
+                return;
+            }
+
+            if (++remote_attempts >= 3) {
+                console.error('localtunnel server offline - try again');
+                process.exit(-1);
+            }
+
+            // connection to localtunnel server
+            var remote = net.connect(remote_opt);
+
+            remote.once('error', function(err) {
+                if (err.code !== 'ECONNREFUSED') {
+                    local.emit('error', err);
                 }
+
+                // retrying connection to local server
+                setTimeout(conn, 1000);
             });
 
-            upstream.on('error', function(err) {
-                console.error(err);
-            });
-        }
+            function recon_local() {
+                remote.pause();
+                remote_attempts = 0;
+
+                // connection to local http server
+                var local = net.connect(local_opt);
+
+                local.once('error', function(err) {
+                    if (err.code !== 'ECONNREFUSED') {
+                        local.emit('error', err);
+                    }
+
+                    // retrying connection to local server
+                    setTimeout(recon_local, 1000);
+                });
+
+                local.once('connect', function() {
+                    remote.resume();
+                    remote.pipe(local).pipe(remote, {end: false});
+                });
+
+                local.once('close', function(had_error) {
+                    if (had_error) {
+                        return;
+                    }
+                    recon_local();
+                });
+            }
+
+            remote.once('close', conn);
+            remote.once('connect', recon_local);
+        })();
     };
 
     var params = {
@@ -58,6 +108,7 @@ var connect = function(opt) {
     // where to quest
     params.uri = base_uri + ((assigned_domain) ? assigned_domain : '?new');
 
+    // get an id from lt server and setup forwarding tcp connections
     request_url(params, function(err, body) {
 
         if (err) {
@@ -76,62 +127,16 @@ var connect = function(opt) {
         // store the id so we can try to get the same one
         assigned_domain = body.id;
 
-        tunnel(host, port, body.max_conn_count || 1);
+        var max_conn = body.max_conn_count || 1;
+        for (var count = 0 ; count < max_conn ; ++count) {
+            tunnel(host, port);
+        }
 
         ev.emit('url', body.url);
     });
 
     return ev;
 };
-
-var duplex = function(remote_host, remote_port, local_host, local_port) {
-    var ev = new EventEmitter();
-
-    // connect to remote tcp server
-    var upstream = net.createConnection(remote_port, remote_host);
-    var internal;
-
-    // when upstream connection is closed, close other associated connections
-    upstream.once('end', function() {
-        ev.emit('error', new Error('upstream connection terminated'));
-
-        // sever connection to internal server
-        // on reconnect we will re-establish
-        internal.end();
-
-        ev.emit('end');
-    });
-
-    upstream.on('error', function(err) {
-        ev.emit('error', err);
-    });
-
-    (function connect_internal() {
-
-        internal = net.createConnection(local_port, local_host);
-        internal.on('error', function() {
-            ev.emit('error', new Error('error connecting to local server. retrying in 1s'));
-            setTimeout(function() {
-                connect_internal();
-            }, 1000);
-        });
-
-        internal.on('end', function() {
-            ev.emit('error', new Error('disconnected from local server. retrying in 1s'));
-            setTimeout(function() {
-                connect_internal();
-            }, 1000);
-        });
-
-        internal.on('connect', function() {
-            console.log('connected to local server');
-        });
-
-        upstream.pipe(internal).pipe(upstream);
-    })();
-
-    return ev;
-}
 
 module.exports.connect = connect;
 

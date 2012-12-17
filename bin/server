@@ -23,7 +23,9 @@ process.once('uncaughtException', function(err) {
     return;
 });
 
-var server = require('../server');
+var server = require('../server')({
+    max_tcp_sockets: 5
+});
 
 server.listen(argv.port, function() {
     log.info('server listening on port: %d', server.address().port);

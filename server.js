@@ -6,16 +6,13 @@ var url = require('url');
 
 // here be dragons
 var HTTPParser = process.binding('http_parser').HTTPParser;
-var ServerResponse = http.ServerResponse;
-var IncomingMessage = http.IncomingMessage;
 
 // vendor
 var log = require('book');
+var createRawServer = require('http-raw');
 
 // local
 var rand_id = require('./lib/rand_id');
-
-var server = http.createServer();
 
 // id -> client http server
 var clients = {};
@@ -23,260 +20,92 @@ var clients = {};
 // available parsers
 var parsers = http.parsers;
 
-// data going back to a client (the last client that made a request)
-function socketOnData(d, start, end) {
+// send this request to the appropriate client
+// in -> incoming request stream
+function proxy_request(client, req, res, rs, ws) {
 
-    var socket = this;
-    var req = this._httpMessage;
+    rs = rs || req.createRawStream();
+    ws = ws || res.createRawStream();
 
-    var response_socket = socket.respond_socket;
-    if (!response_socket) {
-        log.error('no response socket assigned for http response from backend');
+    // socket is a tcp connection back to the user hosting the site
+    var sock = client.sockets.shift();
+
+    // queue request
+    if (!sock) {
+        log.info('no more clients, queued: %s', req.url);
+        rs.pause();
+        client.waiting.push([req, res, rs, ws]);
         return;
     }
 
-    // pass the response from our client back to the requesting socket
-    response_socket.write(d.slice(start, end));
+    log.info('handle req: %s', req.url);
 
-    if (socket.for_websocket) {
-        return;
-    }
+    // pipe incoming request into tcp socket
+    // incoming request isn't allowed to end the socket back to lt client
+    rs.pipe(sock, { end: false });
 
+    sock.ws = ws;
+    sock.req = req;
+
+    // since tcp connection to upstream are kept open
     // invoke parsing so we know when the response is complete
-    var parser = response_socket.out_parser;
-    parser.socket = socket;
+    var parser = sock.parser;
+    parser.reinitialize(HTTPParser.RESPONSE);
+    parser.socket = sock;
 
-    var ret = parser.execute(d, start, end - start);
+    // we have completed a response
+    // the tcp socket is free again
+    parser.onIncoming = function (res) {
+        parser.onMessageComplete = function() {
+            log.info('ended response: %s', req.url);
+
+            // any request we had going on is now done
+            ws.end();
+
+            // no more forwarding
+            delete sock.ws;
+            delete parser.onIncoming;
+
+            // return socket to available pool
+            client.sockets.push(sock);
+
+            var next = client.waiting.shift();
+            if (next) {
+                log.trace('popped');
+                proxy_request(client, next[0], next[1], next[2], next[3]);
+            }
+        };
+    };
+
+    rs.resume();
+}
+
+function upstream_response(d, start, end) {
+    var socket = this;
+
+    var ws = socket.ws;
+    if (!ws) {
+        log.warn('no stream set for req:', socket.req.url);
+        return;
+    }
+
+    ws.write(d.slice(start, end));
+
+    if (socket.upgraded) {
+        return;
+    }
+
+    var ret = socket.parser.execute(d, start, end - start);
     if (ret instanceof Error) {
         log.error(ret);
-        freeParser(parser, req);
+        parsers.free(parser);
         socket.destroy(ret);
     }
 }
 
-function freeParser(parser, req) {
-    if (parser) {
-        parser._headers = [];
-        parser.onIncoming = null;
-        if (parser.socket) {
-            parser.socket.onend = null;
-            parser.socket.ondata = null;
-            parser.socket.parser = null;
-        }
-        parser.socket = null;
-        parser.incoming = null;
-        parsers.free(parser);
-        parser = null;
-    }
-    if (req) {
-        req.parser = null;
-    }
-}
+var handle_req = function (req, res) {
 
-// single http connection
-// gets a single http response back
-server.on('connection', function(socket) {
-
-    var self = this;
-
-    // parser handles incoming requests for the socket
-    // the request is what lets us know if we proxy or not
-    var parser = parsers.alloc();
-    parser.socket = socket;
-    parser.reinitialize(HTTPParser.REQUEST);
-
-    function our_request(req) {
-        var res = new ServerResponse(req);
-        res.assignSocket(socket);
-        self.emit('request', req, res);
-        return;
-    }
-
-    // a full request is complete
-    // we wait for the response from the server
-    parser.onIncoming = function(req, shouldKeepAlive) {
-
-        log.trace('request', req.url);
-
-        // default is that the data is not for the client
-        delete parser.sock;
-        delete parser.buffer;
-        delete parser.client;
-
-        var hostname = req.headers.host;
-        if (!hostname) {
-            log.trace('no hostname: %j', req.headers);
-            return our_request(req);
-        }
-
-        var match = hostname.match(/^([a-z]{4})[.].*/);
-        if (!match) {
-            return our_request(req);
-        }
-
-        var client_id = match[1];
-        var client = clients[client_id];
-
-        // requesting a subdomain that doesn't exist
-        if (!client) {
-            return socket.end();
-        }
-
-        parser.client = client;
-
-        // assigned socket for the client
-        var sock = client.sockets.shift();
-
-        // no free sockets, queue
-        if (!sock) {
-            parser.buffer = true;
-            return;
-        }
-
-        // for tcp proxying
-        parser.sock = sock;
-
-        // set who we will respond back to
-        sock.respond_socket = socket;
-
-        var out_parser = parsers.alloc();
-        out_parser.reinitialize(HTTPParser.RESPONSE);
-        socket.out_parser = out_parser;
-
-        // we have completed a response
-        // the tcp socket is free again
-        out_parser.onIncoming = function (res) {
-            res.on('end', function() {
-                log.trace('done with response for: %s', req.url);
-
-                // done with the parser
-                parsers.free(out_parser);
-
-                // unset the response
-                delete sock.respond_socket;
-
-                var next = client.waiting.shift();
-                if (!next) {
-                    // return socket to available
-                    client.sockets.push(sock);
-                    return;
-                }
-
-                // reuse avail socket for next connection
-                sock.respond_socket = next;
-
-                // needed to know when this response will be done
-                out_parser.reinitialize(HTTPParser.RESPONSE);
-                next.out_parser = out_parser;
-
-                // write original bytes we held cause we were busy
-                sock.write(next.queue);
-
-                // continue with other bytes
-                next.resume();
-
-                return;
-            });
-        };
-    };
-
-    // process new data on the client socket
-    // we may need to forward this it the backend
-    socket.ondata = function(d, start, end) {
-
-        // run through request parser to determine if we should pass to tcp
-        // onIncoming will be run before this returns
-        var ret = parser.execute(d, start, end - start);
-
-        // invalid request from the user
-        if (ret instanceof Error) {
-            log.error(ret);
-            socket.destroy(ret);
-            return;
-        }
-
-        // websocket stuff
-        if (parser.incoming && parser.incoming.upgrade) {
-            log.trace('upgrade request');
-
-            parser.finish();
-
-            var hostname = parser.incoming.headers.host;
-
-            var match = hostname.match(/^([a-z]{4})[.].*/);
-            if (!match) {
-                return our_request(req);
-            }
-
-            var client_id = match[1];
-            var client = clients[client_id];
-
-            var sock = client.sockets.shift();
-            sock.respond_socket = socket;
-            sock.for_websocket = true;
-
-            socket.ondata = function(d, start, end) {
-                sock.write(d.slice(start, end));
-            };
-
-            socket.end = function() {
-                log.trace('websocket end');
-
-                delete sock.respond_socket;
-                client.sockets.push(sock);
-            }
-
-            sock.write(d.slice(start, end));
-
-            return;
-        }
-
-        // if no available socket, buffer the request for later
-        if (parser.buffer) {
-
-            // pause any further data on this socket
-            socket.pause();
-
-            // copy the current data since we have already received it
-            var copy = Buffer(end - start);
-            d.copy(copy, 0, start, end);
-            socket.queue = copy;
-
-            // add socket to queue
-            parser.client.waiting.push(socket);
-
-            return;
-        }
-
-        if (!parser.sock) {
-            return;
-        }
-
-        // assert, respond socket should be set
-
-        // send through tcp tunnel
-        // responses will go back to the respond_socket
-        parser.sock.write(d.slice(start, end));
-    };
-
-    socket.onend = function() {
-        var ret = parser.finish();
-
-        if (ret instanceof Error) {
-            log.error(ret);
-            socket.destroy(ret);
-            return;
-        }
-
-        socket.end();
-    };
-
-    socket.on('close', function() {
-        parsers.free(parser);
-    });
-});
-
-server.on('request', function(req, res) {
+    var max_tcp_sockets = req.socket.server.max_tcp_sockets;
 
     // ignore favicon
     if (req.url === '/favicon.ico') {
@@ -284,7 +113,26 @@ server.on('request', function(req, res) {
         return res.end();
     }
 
-    var parsed = url.parse(req.url, true);
+    var hostname = req.headers.host;
+    if (!hostname) {
+        log.trace('no hostname: %j', req.headers);
+        return res.end();
+    }
+
+    var match = hostname.match(/^([a-z]{4})[.].*/);
+    if (match) {
+        var client_id = match[1];
+        var client = clients[client_id];
+
+        // no such subdomain
+        if (!client) {
+            log.trace('no client found for id: ' + client_id);
+            res.statusCode = 404;
+            return res.end();
+        }
+
+        return proxy_request(client, req, res);
+    }
 
     // redirect main page to github reference
     if (req.url === '/' && !parsed.query.new) {
@@ -314,10 +162,6 @@ server.on('request', function(req, res) {
         id = rand_id();
     }
 
-    // maximum number of tcp connections the client can setup
-    // each tcp channel allows for more parallel requests
-    var max_tcp_sockets = 4;
-
     // sockets is a list of available sockets for the connection
     // waiting is?
     var client = clients[id] = {
@@ -345,9 +189,7 @@ server.on('request', function(req, res) {
 
     // user has 5 seconds to connect before their slot is given up
     function maybe_tcp_close() {
-        conn_timeout = setTimeout(function() {
-            client_server.close();
-        }, 5000);
+        conn_timeout = setTimeout(client_server.close.bind(client_server), 5000);
     }
 
     maybe_tcp_close();
@@ -371,12 +213,16 @@ server.on('request', function(req, res) {
         // no need to close the client server
         clearTimeout(conn_timeout);
 
-        // multiplexes socket data out to clients
-        socket.ondata = socketOnData;
+        // allocate a response parser for the socket
+        // it only needs one since it will reuse it
+        socket.parser = parsers.alloc();
+
+        socket._orig_ondata = socket.ondata;
+        socket.ondata = upstream_response;
 
         client.sockets.push(socket);
 
-        socket.on('close', function(had_error) {
+        socket.once('close', function(had_error) {
             log.trace('client %s closed socket', id);
 
             // remove this socket
@@ -402,7 +248,75 @@ server.on('request', function(req, res) {
     client_server.on('error', function(err) {
         log.error(err);
     });
-});
+};
 
-module.exports = server;
+var handle_upgrade = function(req, ws) {
+
+    if (req.headers.connection !== 'Upgrade') {
+        return;
+    }
+
+    var hostname = req.headers.host;
+    if (!hostname) {
+        return res.end();
+    }
+
+    var match = hostname.match(/^([a-z]{4})[.].*/);
+
+    // not a valid client
+    if (!match) {
+        return res.end();
+    }
+
+    var client_id = match[1];
+    var client = clients[client_id];
+
+    if (!client) {
+        // no such subdomain
+        return res.end();
+    }
+
+    var socket = client.sockets.shift();
+    if (!socket) {
+        // no available sockets to upgrade to
+        return res.end();
+    }
+
+    var stream = req.createRawStream();
+
+    socket.ws = ws;
+    socket.upgraded = true;
+
+    stream.once('end', function() {
+        delete socket.ws;
+
+        // when this ends, we just reset the socket to the lt client
+        // this is easier than trying to figure anything else out
+        socket.end();
+
+        // put socket back into available pool
+        client.sockets.push(socket);
+
+        var next = client.waiting.shift();
+        if (next) {
+            log.trace('popped');
+            proxy_request(client, next[0], next[1], next[2], next[3]);
+        }
+    });
+
+    stream.pipe(socket, {end: false});
+    socket.once('end', ws.end.bind(ws));
+};
+
+module.exports = function(opt) {
+    opt = opt || {};
+
+    var server = createRawServer();
+
+    server.max_tcp_sockets = opt.max_tcp_sockets || 5;
+    server.on('request', handle_req);
+    server.on('upgrade', handle_upgrade);
+
+    return server;
+};
 
