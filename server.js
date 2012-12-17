@@ -134,6 +134,8 @@ var handle_req = function (req, res) {
         return proxy_request(client, req, res);
     }
 
+    var parsed = url.parse(req.url, true);
+
     // redirect main page to github reference
     if (req.url === '/' && !parsed.query.new) {
         res.writeHead(301, { Location: 'http://shtylman.github.com/localtunnel/' });
