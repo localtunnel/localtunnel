@@ -4,7 +4,7 @@ localtunnel exposes your localhost to the world for easy testing and sharing! No
 
 Great for working with browser testing tools like browserling or external api callback services like twilio which require a public url for callbacks. 
 
-## installation ##
+## Installation ##
 
 To use `lt` globally
 ```
@@ -17,15 +17,13 @@ To use it locally:
 git clone git://github.com/shtylman/localtunnel.git
 cd localtunnel
 npm install
-bin/client --port 3000
 ```
-
 
 ## Usage ##
 
 There are mainly two ways you could use localtunnel:
-- use the service `localtunnel.me` (by default) together with the built-in client.
-- setup both the server application and client application yourself.
+- Only use the built-in client with the service `localtunnel.me` (by default).
+- Setup both the server application and client application yourself.
 
 ### Client-Only Usage
 
@@ -40,10 +38,11 @@ Thats it! It will connect to the tunnel server, setup the tunnel, and tell you w
 You can restart your local server all you want, `lt` is smart enough to detect this and reconnect once it is back.
 
 ### Server plus Client Usage
+
 #### Requirements
-- Install `localtunnel` on both ther server and the client to get it work.
+- Install `localtunnel` on both ther server and the client.
 - There is a domain and subdomain available to reach the server, such as `dev.example.com` and `*.dev.example.com`.
-- The client should be able to **init** connections to any non-root TCP ports on the server. Setup your firewall accordingly.
+- The client should be able to **init** connections to the server listening port and any non-root TCP ports on the server. Setup your firewall accordingly.
 
 #### On the server
 After the installation, start the server to listen at a TCP port, and start the client to init connection to that port:
@@ -56,9 +55,10 @@ bin/client --port 3000 --host http://dev.example.com:1324
 ```
 Now you will get a domain name such as `qdci.dev.example.com` to visit your local app listening at port 3000.
 
-If you want to server listen on 80 port without starting it as root, you might need an reverse proxy setup. Check this [gist](https://gist.github.com/4351206) for a simple reverse proxy with nginx.
+In most cases, outcoming requests will arrive at port 80, you could either start the server as root and listen on 80 or you might need an reverse proxy setup. Check this [gist](https://gist.github.com/4351206) for a simple reverse proxy with nginx.
 
-Now you could start the client to connection port 80 on the server.
+With the reverse proxy, now you could start the client to connection port 80 on the server.
+
 ```bash
 # on server
 bin/server --port 1324
