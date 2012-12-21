@@ -21,7 +21,7 @@ bin/client --port 3000
 ```
 
 
-## USE ##
+## Usage ##
 
 There are mainly two ways you could use localtunnel:
 - use the service `localtunnel.me` (by default) together with the built-in client.
@@ -43,20 +43,22 @@ You can restart your local server all you want, `lt` is smart enough to detect t
 #### Requirements
 - Install `localtunnel` on both ther server and the client to get it work.
 - There is a domain and subdomain available to reach the server, such as `dev.example.com` and `*.dev.example.com`.
-- The client should be able to **init** connections to 80 and any non-root TCP ports on the server.
+- The client should be able to **init** connections to any non-root TCP ports on the server. Setup your firewall accordingly.
 
 #### On the server
-After the installation, setup the server, it should be able to listen at 80, so you might need to start it as root.
+After the installation, start the server to listen at a TCP port, and start the client to init connection to that port:
 ```bash
 # on server
-sudo bin/server
+bin/server --port 1324
 
 # on client
-bin/client --port 3000 --host http://dev.example.com
+bin/client --port 3000 --host http://dev.example.com:1324
 ```
 Now you will get a domain name such as `qdci.dev.example.com` to visit your local app listening at port 3000.
 
-You could also config the server to listen at another port
+If you want to server listen on 80 port without starting it as root, you might need an reverse proxy setup. Check this [gist](https://gist.github.com/4351206) for a simple reverse proxy with nginx.
+
+Now you could start the client to connection port 80 on the server.
 ```bash
 # on server
 bin/server --port 1324
@@ -64,7 +66,6 @@ bin/server --port 1324
 # on client
 bin/client --port 3000 --host http://dev.example.com
 ```
-But the server is required to listen remote requests from port 80, you might need an reverse proxy setup. Check this [gist](https://gist.github.com/4351206) for a simple reverse proxy with nginx.
 
 ### API ###
 
