@@ -105,7 +105,9 @@ function upstream_response(d, start, end) {
 
 var handle_req = function (req, res) {
 
-    var max_tcp_sockets = req.socket.server.max_tcp_sockets;
+    var max_tcp_sockets = req.socket.server.max_tcp_sockets,
+        min_proxy_port = req.socket.server.min_proxy_port,
+        max_proxy_port = req.socket.server.max_proxy_port;
 
     // ignore favicon
     if (req.url === '/favicon.ico') {
@@ -171,8 +173,13 @@ var handle_req = function (req, res) {
         waiting: []
     };
 
+    var proxy_port = (
+        Math.floor(Math.random() * (max_proxy_port - min_proxy_port)) +
+        min_proxy_port
+    );
+
     var client_server = net.createServer();
-    client_server.listen(function() {
+    client_server.listen(proxy_port, function() {
         var port = client_server.address().port;
         log.info('tcp server listening on port: %d', port);
 
@@ -316,6 +323,8 @@ module.exports = function(opt) {
     var server = createRawServer();
 
     server.max_tcp_sockets = opt.max_tcp_sockets || 5;
+    server.min_proxy_port = opt.min_proxy_port || 1;
+    server.max_proxy_port = opt.max_proxy_port || 65535;
     server.on('request', handle_req);
     server.on('upgrade', handle_upgrade);
 

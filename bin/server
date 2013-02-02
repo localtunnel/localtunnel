@@ -5,10 +5,18 @@ var log = require('book');
 var optimist = require('optimist');
 
 var argv = optimist
-    .usage('Usage: $0 --port [num]')
+    .usage('Usage: $0 --port [--min-proxy-port] [--max-proxy-port] [num]')
     .options('port', {
         default: '80',
         describe: 'listen on this port for outside requests'
+    })
+    .options('min-proxy-port', {
+        default: '1024',
+        describe: 'minimum port number used for proxy channel'
+    })
+    .options('max-proxy-port', {
+        default: '65535',
+        describe: 'minimum port number used for proxy channel'
     })
     .argv;
 
@@ -24,7 +32,9 @@ process.once('uncaughtException', function(err) {
 });
 
 var server = require('../server')({
-    max_tcp_sockets: 5
+    max_tcp_sockets: 5,
+    min_proxy_port: parseInt(argv['min-proxy-port']),
+    max_proxy_port: parseInt(argv['max-proxy-port'])
 });
 
 server.listen(argv.port, function() {
