@@ -59,7 +59,7 @@ var connect = function(opt) {
 
             remote.once('error', function(err) {
                 if (err.code !== 'ECONNREFUSED') {
-                    local.emit('error', err);
+                    remote.emit('error', err);
                 }
 
                 // retrying connection to local server
