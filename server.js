@@ -1,48 +1,45 @@
-
-// builtin
 var http = require('http');
 var net = require('net');
 var url = require('url');
 
-// here be dragons
-var HTTPParser = process.binding('http_parser').HTTPParser;
-
-// vendor
 var log = require('book');
+var debug = require('debug')('localtunnel-server');
 var createRawServer = require('http-raw');
 
-// local
 var rand_id = require('./lib/rand_id');
+
+// here be dragons, understanding of node http internals will be required
+var HTTPParser = process.binding('http_parser').HTTPParser;
 
 // id -> client http server
 var clients = {};
 
-// available parsers
+// available parsers for requests
+// this is borrowed from how node does things by preallocating parsers
 var parsers = http.parsers;
 
 // send this request to the appropriate client
 // in -> incoming request stream
 function proxy_request(client, req, res, rs, ws) {
 
-    rs = rs || req.createRawStream();
-    ws = ws || res.createRawStream();
-
     // socket is a tcp connection back to the user hosting the site
     var sock = client.sockets.shift();
 
     // queue request
     if (!sock) {
-        log.info('no more clients, queued: %s', req.url);
+        debug('no more clients, queued: %s', req.url);
         rs.pause();
         client.waiting.push([req, res, rs, ws]);
         return;
     }
 
-    log.info('handle req: %s', req.url);
+    debug('handle req: %s', req.url);
 
     // pipe incoming request into tcp socket
-    // incoming request isn't allowed to end the socket back to lt client
-    rs.pipe(sock, { end: false });
+    // incoming request will close the socket when done
+    // lt client should establish a new socket once request is finished
+    // we do this instead of keeping socket open to make things easier
+    rs.pipe(sock);
 
     sock.ws = ws;
     sock.req = req;
@@ -57,23 +54,16 @@ function proxy_request(client, req, res, rs, ws) {
     // the tcp socket is free again
     parser.onIncoming = function (res) {
         parser.onMessageComplete = function() {
-            log.info('ended response: %s', req.url);
+            debug('ended response: %s', req.url);
 
             // any request we had going on is now done
             ws.end();
+            sock.end();
 
             // no more forwarding
             delete sock.ws;
+            delete sock.req;
             delete parser.onIncoming;
-
-            // return socket to available pool
-            client.sockets.push(sock);
-
-            var next = client.waiting.shift();
-            if (next) {
-                log.trace('popped');
-                proxy_request(client, next[0], next[1], next[2], next[3]);
-            }
         };
     };
 
@@ -85,8 +75,7 @@ function upstream_response(d, start, end) {
 
     var ws = socket.ws;
     if (!ws) {
-        log.warn('no stream set for req:', socket.req.url);
-        return;
+        return log.warn('no stream set for req:', socket.req.url);
     }
 
     ws.write(d.slice(start, end));
@@ -107,12 +96,7 @@ var handle_req = function (req, res) {
 
     var max_tcp_sockets = req.socket.server.max_tcp_sockets;
 
-    // ignore favicon
-    if (req.url === '/favicon.ico') {
-        res.writeHead(404);
-        return res.end();
-    }
-
+    // without a hostname, we won't know who the request is for
     var hostname = req.headers.host;
     if (!hostname) {
         log.trace('no hostname: %j', req.headers);
@@ -125,18 +109,30 @@ var handle_req = function (req, res) {
         var client = clients[client_id];
 
         // no such subdomain
+        // we use 502 error to the client to signify we can't service the request
         if (!client) {
-            log.trace('no client found for id: ' + client_id);
-            res.statusCode = 404;
-            return res.end();
+            debug('no client found for id: ' + client_id);
+            res.statusCode = 502;
+            return res.end('localtunnel error: no active client for \'' + client_id + '\'');
         }
 
-        return proxy_request(client, req, res);
+        var rs = req.createRawStream();
+        var ws = res.createRawStream();
+
+        return proxy_request(client, req, res, rs, ws);
+    }
+
+    /// NOTE: everything below is for new client setup (not proxied request)
+
+    // ignore favicon requests
+    if (req.url === '/favicon.ico') {
+        res.writeHead(404);
+        return res.end();
     }
 
     var parsed = url.parse(req.url, true);
 
-    // redirect main page to github reference
+    // redirect main page to github reference for root requests
     if (req.url === '/' && !parsed.query.new) {
         res.writeHead(301, { Location: 'http://shtylman.github.com/localtunnel/' });
         res.end();
@@ -159,38 +155,45 @@ var handle_req = function (req, res) {
 
     var id = requested_id || rand_id();
 
-    // if the id already exists, this client must use something else
+    // if the id already exists, this client is assigned a random id
     if (clients[id]) {
         id = rand_id();
     }
 
     // sockets is a list of available sockets for the connection
-    // waiting is?
+    // waiting is a list of requests still needing to be handled
     var client = clients[id] = {
         sockets: [],
         waiting: []
     };
 
+    // new tcp server to service requests for this client
     var client_server = net.createServer();
     client_server.listen(function() {
         var port = client_server.address().port;
-        log.info('tcp server listening on port: %d', port);
+        debug('tcp server listening on port: %d', port);
 
         var url = 'http://' + id + '.' + req.headers.host;
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
+            // full url for internet facing requests
             url: url,
+            // "subdomain" part
             id: id,
+            // port for lt client tcp connections
             port: port,
+            // maximum number of tcp connections allowed by lt client
             max_conn_count: max_tcp_sockets
         }));
     });
 
+    // track initial user connection setup
     var conn_timeout;
 
     // user has 5 seconds to connect before their slot is given up
     function maybe_tcp_close() {
+        clearTimeout(conn_timeout);
         conn_timeout = setTimeout(client_server.close.bind(client_server), 5000);
     }
 
@@ -199,10 +202,18 @@ var handle_req = function (req, res) {
     // no longer accepting connections for this id
     client_server.on('close', function() {
         log.trace('closed tcp socket for client(%s)', id);
+
         clearTimeout(conn_timeout);
         delete clients[id];
+
+        // clear waiting by ending responses, (requests?)
+        client.waiting.forEach(function(waiting) {
+            waiting[1].end();
+            waiting[3].end(); // write stream
+        });
     });
 
+    // new tcp connection from lt client
     client_server.on('connection', function(socket) {
 
         // no more socket connections allowed
@@ -210,9 +221,9 @@ var handle_req = function (req, res) {
             return socket.end();
         }
 
-        log.trace('new connection for id: %s', id);
+        debug('new connection for id: %s', id);
 
-        // no need to close the client server
+        // a single connection is enough to keep client id slot open
         clearTimeout(conn_timeout);
 
         // allocate a response parser for the socket
@@ -222,20 +233,25 @@ var handle_req = function (req, res) {
         socket._orig_ondata = socket.ondata;
         socket.ondata = upstream_response;
 
-        client.sockets.push(socket);
-
         socket.once('close', function(had_error) {
-            log.trace('client %s closed socket', id);
+            debug('client %s closed socket (error: %s)', id, had_error);
+
+            // what if socket was servicing a request at this time?
+            // then it will be put back in available after right?
 
             // remove this socket
             var idx = client.sockets.indexOf(socket);
-            client.sockets.splice(idx, 1);
+            if (idx >= 0) {
+                client.sockets.splice(idx, 1);
+            }
 
-            log.trace('remaining client sockets: %s', client.sockets.length);
+            // need to track total sockets, not just active available
+
+            debug('remaining client sockets: %s', client.sockets.length);
 
             // no more sockets for this ident
             if (client.sockets.length === 0) {
-                log.trace('all client(%s) sockets disconnected', id);
+                debug('all client(%s) sockets disconnected', id);
                 maybe_tcp_close();
             }
         });
@@ -245,6 +261,14 @@ var handle_req = function (req, res) {
             log.error(err);
             socket.end();
         });
+
+        client.sockets.push(socket);
+
+        var next = client.waiting.shift();
+        if (next) {
+            debug('handling queued request');
+            proxy_request(client, next[0], next[1], next[2], next[3]);
+        }
     });
 
     client_server.on('error', function(err) {
@@ -295,18 +319,9 @@ var handle_upgrade = function(req, ws) {
         // when this ends, we just reset the socket to the lt client
         // this is easier than trying to figure anything else out
         socket.end();
-
-        // put socket back into available pool
-        client.sockets.push(socket);
-
-        var next = client.waiting.shift();
-        if (next) {
-            log.trace('popped');
-            proxy_request(client, next[0], next[1], next[2], next[3]);
-        }
     });
 
-    stream.pipe(socket, {end: false});
+    stream.pipe(socket);
     socket.once('end', ws.end.bind(ws));
 };
 
