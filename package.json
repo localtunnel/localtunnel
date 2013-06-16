@@ -11,7 +11,8 @@
     "request": "2.11.4",
     "book": "1.2.0",
     "optimist": "0.3.4",
-    "http-raw": "1.1.0"
+    "http-raw": "1.1.0",
+    "debug": "0.7.2"
   },
   "devDependencies": {
     "mocha": "1.6.0"
