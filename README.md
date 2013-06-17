@@ -29,9 +29,9 @@ You can restart your local server all you want, ```lt``` is smart enough to dete
 The localtunnel client is also usable through an API (for test integration, automation, etc)
 
 ```javascript
-var lt_client = require('localtunnel').client;
+var localtunnel = require('localtunnel');
 
-var client = lt_client.connect({
+var client = localtunnel.connect({
     // the localtunnel server
     host: 'http://localtunnel.me',
     // your local application port
