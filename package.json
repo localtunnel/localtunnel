@@ -2,7 +2,7 @@
   "author": "Roman Shtylman <shtylman@gmail.com>",
   "name": "localtunnel",
   "description": "expose localhost to the world",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/shtylman/localtunnel.git"
@@ -11,8 +11,7 @@
     "request": "2.11.4",
     "optimist": "0.3.4"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "bin": {
     "lt": "./bin/client"
   },
