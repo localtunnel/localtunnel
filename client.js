@@ -1,8 +1,8 @@
-// builtin
 var net = require('net');
 var url = require('url');
-var request = require('request');
 var EventEmitter = require('events').EventEmitter;
+
+var request = require('request');
 
 // request upstream url and connection info
 var request_url = function(params, cb) {
@@ -140,3 +140,7 @@ var connect = function(opt) {
 
 module.exports.connect = connect;
 
+// for backwards compatibility
+// old localtunnel modules had server and client code in same module
+// so to keep .client working we expose it here
+module.exports.client = module.exports;

@@ -1,4 +1,4 @@
-# localtunnel [![Build Status](https://secure.travis-ci.org/shtylman/localtunnel.png)](http://travis-ci.org/shtylman/localtunnel) #
+# localtunnel #
 
 localtunnel exposes your localhost to the world for easy testing and sharing! No need to mess with DNS or deploy just to have others test out your changes.
 
@@ -24,43 +24,9 @@ Thats it! It will connect to the tunnel server, setup the tunnel, and tell you w
 
 You can restart your local server all you want, ```lt``` is smart enough to detect this and reconnect once it is back.
 
-### custom server
-
-The default localtunnel client connects to the ```localtunnel.me``` server. You can however easily setup and run your own server. In order to run your own localtunnel server you must ensure that your server can meet the following requirements:
-
-* You can setup DNS entries for your domain.tld and for *.domain.tld (or sub.domain.tld and *.sub.domain.tld)
-* The server can accept incoming TCP connections for any non-root TCP port (ports over 1000).
-
-The above are important as the client will ask the server for a subdomain under a particular domain. The server will listen on any OS assigned TCP port for client connections
-
-#### setup
-
-```shell
-// pick a place where the files will live
-git clone git://github.com/shtylman/localtunnel.git
-cd localtunnel
-npm install
-
-// server set to run on port 1234
-bin/server --port 1324
-```
-
-The localtunnel server is now running and waiting for client requests on port 1234. You will most likely want to setup a reverse proxy to listen on port 80 (or start localtunnel on port 80 directly).
-
-#### use your server
-
-You can now use your domain with the ```--host``` flag for the ```lt``` client.
-```shell
-lt --host http://sub.example.tld:1234 --port 9000
-```
-
-You will be assigned a url similar to ```qdci.sub.example.com:1234```
-
-If your server is being a reverse proxy (i.e. nginx) and is able to listen on port 80, then you do not need the ```:1234``` part of the hostname for the ```lt``` client
-
 ## API ##
 
-The localtunnel client is also usable through an API (test integration, automation, etc)
+The localtunnel client is also usable through an API (for test integration, automation, etc)
 
 ```javascript
 var lt_client = require('localtunnel').client;
@@ -82,3 +48,10 @@ client.on('error', function(err) {
     // uh oh!
 });
 ```
+
+## server ##
+
+See shtylman/localtunnel-server for details on the server that powers localtunnel.
+
+## License ##
+MIT

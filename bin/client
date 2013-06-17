@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-var lt_client = require(__dirname + '/../client');
+var lt_client = require('../client');
 
 var argv = require('optimist')
     .usage('Usage: $0 --port [num]')
