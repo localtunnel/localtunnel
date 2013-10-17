@@ -8,7 +8,7 @@ var request = require('request');
 var request_url = function(params, cb) {
     request(params, function(err, res, body) {
         if (err) {
-            cb(err);
+            return cb(err);
         }
 
         cb(null, body);
