@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "request": "2.11.4",
-    "optimist": "0.3.4"
+    "optimist": "0.3.4",
+    "after": "0.8.1"
   },
   "devDependencies": {},
   "bin": {

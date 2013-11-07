@@ -2,6 +2,7 @@ var net = require('net');
 var url = require('url');
 var EventEmitter = require('events').EventEmitter;
 
+var after = require('after');
 var request = require('request');
 
 // request upstream url and connection info
@@ -30,7 +31,7 @@ var connect = function(opt) {
     var assigned_domain = opt.subdomain;
 
     // connect to upstream given connection parameters
-    var tunnel = function (remote_host, remote_port) {
+    var tunnel = function (remote_host, remote_port, dead) {
 
         var remote_opt = {
             host: remote_host,
@@ -49,9 +50,9 @@ var connect = function(opt) {
                 return;
             }
 
+            // we need a new tunnel
             if (++remote_attempts >= 3) {
-                console.error('localtunnel server offline - try again');
-                process.exit(-1);
+                return dead();
             }
 
             // connection to localtunnel server
@@ -108,32 +109,42 @@ var connect = function(opt) {
     // where to quest
     params.uri = base_uri + ((assigned_domain) ? assigned_domain : '?new');
 
-    // get an id from lt server and setup forwarding tcp connections
-    request_url(params, function(err, body) {
+    function init_tunnel() {
+        // get an id from lt server and setup forwarding tcp connections
+        request_url(params, function(err, body) {
+            if (err) {
+                ev.emit('error', new Error('tunnel server not available: ' + err.message + ', retry 1s'));
 
-        if (err) {
-            ev.emit('error', new Error('tunnel server not available: %s, retry 1s', err.message));
+                // retry interval for id request
+                return setTimeout(function() {
+                    init_tunnel();
+                }, 1000);
+            }
 
-            // retry interval for id request
-            return setTimeout(function() {
-                connect_proxy(opt);
-            }, 1000);
-        }
+            // our assigned hostname and tcp port
+            var port = body.port;
+            var host = upstream.hostname;
 
-        // our assigned hostname and tcp port
-        var port = body.port;
-        var host = upstream.hostname;
+            // store the id so we can try to get the same one
+            assigned_domain = body.id;
 
-        // store the id so we can try to get the same one
-        assigned_domain = body.id;
+            var max_conn = body.max_conn_count || 1;
 
-        var max_conn = body.max_conn_count || 1;
-        for (var count = 0 ; count < max_conn ; ++count) {
-            tunnel(host, port);
-        }
+            // after all our tunnels die, we ask for new ones
+            // this might happen if the upstream server dies
+            var dead = after(max_conn, function() {
+                init_tunnel();
+            });
 
-        ev.emit('url', body.url);
-    });
+            for (var count = 0 ; count < max_conn ; ++count) {
+                tunnel(host, port, dead);
+            }
+
+            ev.emit('url', body.url);
+        });
+    }
+
+    init_tunnel();
 
     return ev;
 };
