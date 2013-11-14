@@ -11,12 +11,17 @@ var argv = require('optimist')
     .options('subdomain', {
         describe: 'request this subdomain'
     })
+    .options('local-host', {
+        describe: 'tunnel traffic to this host instead of localhost'
+    })
+    .default('local-host', 'localhost')
     .describe('port', 'internal http server port')
     .argv;
 
 var opt = {
     host: argv.host,
     port: argv.port,
+    local_host: argv['local-host'],
     subdomain: argv.subdomain,
 }
 

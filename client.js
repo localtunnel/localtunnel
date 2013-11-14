@@ -19,6 +19,9 @@ var request_url = function(params, cb) {
 var connect = function(opt) {
     var ev = new EventEmitter();
 
+    // local host
+    var local_host = opt.local_host;
+
     // local port
     var local_port = opt.port;
 
@@ -39,7 +42,7 @@ var connect = function(opt) {
         };
 
         var local_opt = {
-            host: 'localhost',
+            host: local_host,
             port: local_port
         };
 
