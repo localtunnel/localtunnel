@@ -62,7 +62,13 @@ var connect = function(opt) {
             var remote = net.connect(remote_opt);
 
             remote.once('error', function(err) {
-                if (err.code !== 'ECONNREFUSED') {
+
+                // emit connection refused errors immediately, because they
+                // indicate that the tunnel can't be established.
+                if (err.code === 'ECONNREFUSED') {
+                    ev.emit('error', new Error('connection refused: ' + remote_host + ':' + remote_port + ' (check your firewall settings)'));
+                }
+                else {
                     remote.emit('error', err);
                 }
 
