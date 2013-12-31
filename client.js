@@ -98,9 +98,6 @@ TunnelCluster.prototype.open = function() {
 
             // when local closes, also get a new remote
             local.once('close', function(had_error) {
-                remote.unpipe();
-                local.unpipe();
-                remote.end();
                 debug('local connection closed [%s]', had_error);
             });
         });
