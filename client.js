@@ -57,6 +57,11 @@ TunnelCluster.prototype.open = function() {
     function conn_local() {
         debug('connecting locally to %s:%d', local_host, local_port);
 
+        if (remote.destroyed) {
+            self.emit('dead');
+            return;
+        }
+
         remote.pause();
 
         // connection to local http server
@@ -103,13 +108,28 @@ TunnelCluster.prototype.open = function() {
 
     // tunnel is considered open when remote connects
     remote.once('connect', function() {
-        self.emit('open');
+        self.emit('open', remote);
     });
     remote.once('connect', conn_local);
 };
 
-var init = function(opt, cb) {
-    var ev = new EventEmitter();
+var Tunnel = function(opt) {
+    if (!(this instanceof Tunnel)) {
+        return new Tunnel(opt);
+    }
+
+    var self = this;
+    self._closed = false;
+    self._opt = opt;
+};
+
+Tunnel.prototype.__proto__ = EventEmitter.prototype;
+
+// initialize connection
+// callback with connection info
+Tunnel.prototype._init = function(cb) {
+    var self = this;
+    var opt = self._opt;
 
     var params = {
         path: '/',
@@ -130,8 +150,8 @@ var init = function(opt, cb) {
     (function get_url() {
         request(params, function(err, res, body) {
             if (err) {
-                ev.emit('error', new Error('tunnel server offline: ' + err.message + ', retry 1s'));
-
+                // TODO (shtylman) don't print to stdout?
+                console.log('tunnel server offline: ' + err.message + ', retry 1s');
                 return setTimeout(get_url, 1000);
             }
 
@@ -149,43 +169,83 @@ var init = function(opt, cb) {
             });
         });
     })();
+};
 
-    return ev;
+Tunnel.prototype._establish = function(info) {
+    var self = this;
+    var opt = self._opt;
+
+    info.local_host = opt.local_host || 'localhost';
+    info.local_port = opt.port;
+
+    var tunnels = self.tunnel_cluster = TunnelCluster(info);
+
+    // only emit the url the first time
+    tunnels.once('open', function() {
+        self.emit('url', info.url);
+    });
+
+    var tunnel_count = 0;
+
+    // track open count
+    tunnels.on('open', function(tunnel) {
+        tunnel_count++;
+        debug('tunnel open [total: %d]', tunnel_count);
+
+        var close_handler = function() {
+            tunnel.destroy();
+        };
+
+        if (self._closed) {
+            return close_handler();
+        }
+
+        self.once('close', close_handler);
+        tunnel.once('close', function() {
+            self.removeListener('close', close_handler);
+        });
+    });
+
+    // when a tunnel dies, open a new one
+    tunnels.on('dead', function(tunnel) {
+        tunnel_count--;
+        debug('tunnel dead [total: %d]', tunnel_count);
+
+        if (self._closed) {
+            return;
+        }
+
+        tunnels.open();
+    });
+
+    // establish as many tunnels as allowed
+    for (var count = 0 ; count < info.max_conn ; ++count) {
+        tunnels.open();
+    }
+};
+
+Tunnel.prototype.open = function() {
+    var self = this;
+
+    self._init(function(err, info) {
+        if (err) {
+            return self.emit('error', err);
+        }
+
+        self._establish(info);
+    });
+};
+
+// shutdown tunnels
+Tunnel.prototype.close = function() {
+    var self = this;
+
+    self._closed = true;
+    self.emit('close');
 };
 
 module.exports.connect = function(opt) {
-    var client = init(opt, function(err, info) {
-
-        info.local_host = opt.local_host;
-        info.local_port = opt.port;
-
-        var tunnels = TunnelCluster(info);
-
-        // only emit the url the first time
-        tunnels.once('open', function() {
-            client.emit('url', info.url);
-        });
-
-        var tunnel_count = 0;
-
-        // track open count
-        tunnels.on('open', function(tunnel) {
-            tunnel_count++;
-            debug('tunnel open [total: %d]', tunnel_count);
-        });
-
-        // when a tunnel dies, open a new one
-        tunnels.on('dead', function() {
-            tunnel_count--;
-            debug('tunnel dead [total: %d]', tunnel_count);
-            tunnels.open();
-        });
-
-        // establish as many tunnels as allowed
-        for (var count = 0 ; count < info.max_conn ; ++count) {
-            tunnels.open();
-        }
-    });
-
+    var client = Tunnel(opt);
+    client.open();
     return client;
 };
