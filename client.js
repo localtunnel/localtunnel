@@ -72,7 +72,6 @@ TunnelCluster.prototype.open = function() {
 
         function remote_close() {
             self.emit('dead');
-            local.unpipe();
             local.end();
         };
 
