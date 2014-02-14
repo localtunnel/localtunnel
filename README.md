@@ -53,14 +53,14 @@ localtunnel(port, function(err, tunnel) {
 The `tunnel` instance returned to your callback emits the following events
 
 |event|args|description|
-|:|:|:|
+|----|----|----|
 |error|err|fires when an error happens on the tunnel|
 |close||fires when the tunnel has closed|
 
 The `tunnel instance has the following methods
 
 |method|args|description|
-|:|:|:|
+|----|----|----|
 |close||close the tunnel|
 
 ## other clients ##
