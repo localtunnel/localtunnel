@@ -12,7 +12,12 @@
     "optimist": "0.3.4",
     "debug": "0.7.4"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "mocha": "~1.17.0"
+  },
+  "scripts": {
+    "test": "mocha --ui qunit --reporter list -- test/index.js"
+  },
   "bin": {
     "lt": "./bin/client"
   },
