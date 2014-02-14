@@ -1,4 +1,4 @@
-# unreleased
+# 1.0.0 / 2014-02-14
 
 * default to localltunnel.me for host
 * remove exported `connect` method (just export one function that does the same thing)
