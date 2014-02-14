@@ -1,4 +1,4 @@
-# localtunnel #
+# localtunnel [![Build Status](https://travis-ci.org/defunctzombie/localtunnel.png?branch=master)](https://travis-ci.org/defunctzombie/localtunnel) #
 
 localtunnel exposes your localhost to the world for easy testing and sharing! No need to mess with DNS or deploy just to have others test out your changes.
 
