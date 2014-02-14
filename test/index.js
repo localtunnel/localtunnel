@@ -22,7 +22,6 @@ test('setup local http server', function(done) {
 
 test('setup localtunnel client', function(done) {
     var client = localtunnel.connect({
-        host: 'https://localtunnel.me',
         port: test._fake_port
     });
 
@@ -69,7 +68,6 @@ test('query localtunnel server w/ ident', function(done) {
 
 test('request specific domain', function(done) {
     var client = localtunnel.connect({
-        host: 'https://localtunnel.me',
         port: test._fake_port,
         subdomain: 'abcd'
     });

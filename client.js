@@ -116,7 +116,9 @@ var Tunnel = function(opt) {
 
     var self = this;
     self._closed = false;
-    self._opt = opt;
+    self._opt = opt || {};
+
+    self._opt.host = self._opt.host || 'https://localtunnel.me';
 };
 
 Tunnel.prototype.__proto__ = EventEmitter.prototype;
