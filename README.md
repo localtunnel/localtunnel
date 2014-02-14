@@ -31,9 +31,11 @@ The localtunnel client is also usable through an API (for test integration, auto
 ```javascript
 var localtunnel = require('localtunnel');
 
-var client = localtunnel.connect({
-    // the localtunnel server
-    host: 'http://localtunnel.me',
+var client = localtunnel({
+    // the localtunnel server to proxy through
+    // default is localtunnel.me
+    //host: 'http://localtunnel.me',
+
     // your local application port
     port: 12345
 });

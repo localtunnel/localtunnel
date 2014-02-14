@@ -242,7 +242,7 @@ Tunnel.prototype.close = function() {
     self.emit('close');
 };
 
-module.exports.connect = function(opt) {
+module.exports = function localtunnel(opt) {
     var client = Tunnel(opt);
     client.open();
     return client;
