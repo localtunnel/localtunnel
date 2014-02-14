@@ -28,28 +28,40 @@ You can restart your local server all you want, ```lt``` is smart enough to dete
 
 The localtunnel client is also usable through an API (for test integration, automation, etc)
 
+### localtunnel(port [,opts], fn)
+
+Creates a new localtunnel to the specified local `port`. `fn` will be called once you have been assigned a public localtunnel url. `opts` can be used to request a specific `subdomain`.
+
 ```javascript
 var localtunnel = require('localtunnel');
 
-var client = localtunnel({
-    // the localtunnel server to proxy through
-    // default is localtunnel.me
-    //host: 'http://localtunnel.me',
+localtunnel(port, function(err, tunnel) {
+    if (err) ...
 
-    // your local application port
-    port: 12345
-});
-
-// when your are assigned a url
-client.on('url', function(url) {
-    // you can now make http requests to the url
-    // they will be proxied to your local server on port [12345]
-});
-
-client.on('error', function(err) {
-    // uh oh!
+    // the assigned public url for your tunnel
+    // i.e. https://abcdefgjhij.localtunnel.me
+    tunnel.url;
 });
 ```
+
+### opts
+
+* `subdomain` A *string* value requesting a specific subdomain on the proxy server. **Note** You may not actually receive this name depending on availablily.
+
+### Tunnel
+
+The `tunnel` instance returned to your callback emits the following events
+
+|event|args|description|
+|:|:|:|
+|error|err|fires when an error happens on the tunnel|
+|close||fires when the tunnel has closed|
+
+The `tunnel instance has the following methods
+
+|method|args|description|
+|:|:|:|
+|close||close the tunnel|
 
 ## other clients ##
 
@@ -59,7 +71,7 @@ Clients in other languages
 
 ## server ##
 
-See shtylman/localtunnel-server for details on the server that powers localtunnel.
+See defunctzombie/localtunnel-server for details on the server that powers localtunnel.
 
 ## License ##
 MIT

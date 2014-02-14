@@ -21,18 +21,11 @@ test('setup local http server', function(done) {
 });
 
 test('setup localtunnel client', function(done) {
-    var client = localtunnel({
-        port: test._fake_port
-    });
-
-    client.on('url', function(url) {
-        assert.ok(new RegExp('^https:\/\/.*localtunnel.me' + '$').test(url));
-        test._fake_url = url;
+    localtunnel(test._fake_port, function(err, tunnel) {
+        assert.ifError(err);
+        assert.ok(new RegExp('^https:\/\/.*localtunnel.me' + '$').test(tunnel.url));
+        test._fake_url = tunnel.url;
         done();
-    });
-
-    client.on('error', function(err) {
-        done(err);
     });
 });
 
@@ -67,18 +60,10 @@ test('query localtunnel server w/ ident', function(done) {
 });
 
 test('request specific domain', function(done) {
-    var client = localtunnel({
-        port: test._fake_port,
-        subdomain: 'abcd'
-    });
-
-    client.on('url', function(url) {
-        assert.ok(new RegExp('^https:\/\/abcd.localtunnel.me' + '$').test(url));
-        client.close();
+    localtunnel(test._fake_port, { subdomain: 'abcd' }, function(err, tunnel) {
+        assert.ifError(err);
+        assert.ok(new RegExp('^https:\/\/abcd.localtunnel.me' + '$').test(tunnel.url));
+        tunnel.close();
         done();
-    });
-
-    client.on('error', function(err) {
-        console.error(err);
     });
 });

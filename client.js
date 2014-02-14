@@ -222,15 +222,17 @@ Tunnel.prototype._establish = function(info) {
     }
 };
 
-Tunnel.prototype.open = function() {
+Tunnel.prototype.open = function(cb) {
     var self = this;
 
     self._init(function(err, info) {
         if (err) {
-            return self.emit('error', err);
+            return cb(err);
         }
 
+        self.url = info.url;
         self._establish(info);
+        cb();
     });
 };
 
@@ -242,8 +244,21 @@ Tunnel.prototype.close = function() {
     self.emit('close');
 };
 
-module.exports = function localtunnel(opt) {
+module.exports = function localtunnel(port, opt, fn) {
+    if (typeof opt === 'function') {
+        fn = opt;
+        opt = {};
+    }
+
+    opt = opt || {};
+    opt.port = port;
+
     var client = Tunnel(opt);
-    client.open();
-    return client;
+    client.open(function(err) {
+        if (err) {
+            return fn(err);
+        }
+
+        fn(null, client);
+    });
 };

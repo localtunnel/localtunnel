@@ -25,15 +25,17 @@ var opt = {
     subdomain: argv.subdomain,
 }
 
-var client = lt_client.connect(opt);
+lt_client(opt.port, opt, function(err, tunnel) {
+    if (err) {
+        console.error(err);
+        return process.exit(1);
+    }
 
-// only emitted when the url changes
-client.on('url', function(url) {
-    console.log('your url is: %s', url);
-});
+    console.log('your url is: %s', tunnel.url);
 
-client.on('error', function(err) {
-    console.error(err);
+    tunnel.on('error', function(err) {
+        console.error(err);
+    });
 });
 
 // vim: ft=javascript
