@@ -5,6 +5,33 @@ var EventEmitter = require('events').EventEmitter;
 var request = require('request');
 var debug = require('debug')('localtunnel:client');
 
+var stream = require('stream');
+var util = require('util');
+
+// node v0.10+ use native Transform, else polyfill
+var Transform = stream.Transform ||
+    require('readable-stream').Transform;
+
+var HeaderHostTransformer = function(opts) {
+    if (!(this instanceof HeaderHostTransformer)) {
+        return new HeaderHostTransformer(opts);
+    }
+
+    opts = opts || {}
+
+    var self = this;
+    self.host = opts.host || 'localhost';
+
+    Transform.call(this, opts);
+}
+util.inherits(HeaderHostTransformer, Transform);
+
+HeaderHostTransformer.prototype._transform = function (chunk, enc, cb) {
+    var chunk = chunk.toString();
+    this.push(chunk.replace(/(\r\nHost: )\S+/, '$1' + this.host));
+    cb();
+};
+
 // manages groups of tunnels
 var TunnelCluster = function(opt) {
     if (!(this instanceof TunnelCluster)) {
@@ -93,7 +120,8 @@ TunnelCluster.prototype.open = function() {
         local.once('connect', function() {
             debug('connected locally');
             remote.resume();
-            remote.pipe(local).pipe(remote);
+
+            remote.pipe(new HeaderHostTransformer({ host: local_host })).pipe(local).pipe(remote);
 
             // when local closes, also get a new remote
             local.once('close', function(had_error) {
