@@ -14,7 +14,7 @@ This will install the localtunnel module globally and add the 'lt' client cli to
 
 ## use ##
 
-Super Easy! Assuming your local server is running on port 8000, just use the ```lt``` command to start the tunnel.
+Assuming your local server is running on port 8000, just use the ```lt``` command to start the tunnel.
 
 ```
 lt --port 8000
@@ -23,6 +23,13 @@ lt --port 8000
 Thats it! It will connect to the tunnel server, setup the tunnel, and tell you what url to use for your testing. This url will remain active for the duration of your session; so feel free to share it with others for happy fun time!
 
 You can restart your local server all you want, ```lt``` is smart enough to detect this and reconnect once it is back.
+
+### arguments
+
+Below are some common arguments. See `lt --help` for additional arguments
+
+* `--subdomain` request a named subdomain on the localtunnel server (default is random characters)
+* `--local-host` proxy to a hostname other than localhost
 
 ## API ##
 
@@ -47,6 +54,7 @@ localtunnel(port, function(err, tunnel) {
 ### opts
 
 * `subdomain` A *string* value requesting a specific subdomain on the proxy server. **Note** You may not actually receive this name depending on availablily.
+* `local_host` Proxy to this hostname instead of `localhost`. This will also cause the `Host` header to be re-written to this value in proxied requests.
 
 ### Tunnel
 
