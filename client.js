@@ -8,9 +8,7 @@ var debug = require('debug')('localtunnel:client');
 var stream = require('stream');
 var util = require('util');
 
-// node v0.10+ use native Transform, else polyfill
-var Transform = stream.Transform ||
-    require('readable-stream').Transform;
+var Transform = stream.Transform;
 
 var HeaderHostTransformer = function(opts) {
     if (!(this instanceof HeaderHostTransformer)) {
@@ -18,17 +16,24 @@ var HeaderHostTransformer = function(opts) {
     }
 
     opts = opts || {}
+    Transform.call(this, opts);
 
     var self = this;
     self.host = opts.host || 'localhost';
-
-    Transform.call(this, opts);
+    self.replaced = false;
 }
 util.inherits(HeaderHostTransformer, Transform);
 
 HeaderHostTransformer.prototype._transform = function (chunk, enc, cb) {
-    var chunk = chunk.toString();
-    this.push(chunk.replace(/(\r\nHost: )\S+/, '$1' + this.host));
+    var self = this;
+    chunk = chunk.toString();
+
+    // after replacing the first instance of the Host header
+    // we just become a regular passthrough
+    self.push(chunk.replace(/(\r\nHost: )\S+/, function(match, $1) {
+        self._transform = undefined;
+        return $1 + self.host;
+    }));
     cb();
 };
 
@@ -121,7 +126,15 @@ TunnelCluster.prototype.open = function() {
             debug('connected locally');
             remote.resume();
 
-            remote.pipe(new HeaderHostTransformer({ host: local_host })).pipe(local).pipe(remote);
+            var stream = remote;
+
+            // if user requested something other than localhost
+            // then we use host header transform to replace the host header
+            if (local_host !== 'localhost') {
+                stream = remote.pipe(HeaderHostTransformer({ host: local_host }));
+            }
+
+            stream.pipe(local).pipe(remote);
 
             // when local closes, also get a new remote
             local.once('close', function(had_error) {
