@@ -27,14 +27,13 @@ var opt = {
 
 lt_client(opt.port, opt, function(err, tunnel) {
     if (err) {
-        console.error(err);
-        return process.exit(1);
+        throw err;
     }
 
     console.log('your url is: %s', tunnel.url);
 
     tunnel.on('error', function(err) {
-        console.error(err);
+        throw err;
     });
 });
 
