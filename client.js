@@ -87,13 +87,13 @@ TunnelCluster.prototype.open = function() {
     });
 
     function conn_local() {
-        debug('connecting locally to %s:%d', local_host, local_port);
-
         if (remote.destroyed) {
+            debug('remote destroyed');
             self.emit('dead');
             return;
         }
 
+        debug('connecting locally to %s:%d', local_host, local_port);
         remote.pause();
 
         // connection to local http server
@@ -103,19 +103,24 @@ TunnelCluster.prototype.open = function() {
         });
 
         function remote_close() {
+            debug('remote close');
             self.emit('dead');
             local.end();
         };
 
         remote.once('close', remote_close);
 
-        local.on('error', function(err) {
+        // TODO some languages have single threaded servers which makes opening up
+        // multiple local connections impossible. We need a smarter way to scale
+        // and adjust for such instances to avoid beating on the door of the server
+        local.once('error', function(err) {
+            debug('local error %s', err.message);
             local.end();
 
             remote.removeListener('close', remote_close);
 
             if (err.code !== 'ECONNREFUSED') {
-                return local.emit('error', err);
+                return remove.end();
             }
 
             // retrying connection to local server
@@ -146,8 +151,8 @@ TunnelCluster.prototype.open = function() {
     // tunnel is considered open when remote connects
     remote.once('connect', function() {
         self.emit('open', remote);
+        conn_local();
     });
-    remote.once('connect', conn_local);
 };
 
 var Tunnel = function(opt) {
