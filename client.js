@@ -120,7 +120,7 @@ TunnelCluster.prototype.open = function() {
             remote.removeListener('close', remote_close);
 
             if (err.code !== 'ECONNREFUSED') {
-                return remove.end();
+                return remote.end();
             }
 
             // retrying connection to local server
