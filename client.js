@@ -199,6 +199,11 @@ Tunnel.prototype._init = function(cb) {
                 return setTimeout(get_url, 1000);
             }
 
+            if (res.status !== 200) {
+                var err = new Error((body && body.message) || 'localtunnel server returned an error, please try again');
+                return cb(err);
+            }
+
             var port = body.port;
             var host = upstream.hostname;
 
