@@ -14,7 +14,11 @@ var argv = require('optimist')
     .options('local-host', {
         describe: 'tunnel traffic to this host instead of localhost'
     })
+    .options('path', {
+        describe: 'prepend to request path of tunnel traffic'
+    })
     .default('local-host', 'localhost')
+    .default('path', '')
     .describe('port', 'internal http server port')
     .argv;
 
@@ -23,6 +27,7 @@ var opt = {
     port: argv.port,
     local_host: argv['local-host'],
     subdomain: argv.subdomain,
+    path: argv.path
 }
 
 lt_client(opt.port, opt, function(err, tunnel) {

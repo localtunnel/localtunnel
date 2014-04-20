@@ -8,8 +8,12 @@ var localtunnel = require('../');
 test('setup local http server', function(done) {
     var server = http.createServer();
     server.on('request', function(req, res) {
-        res.write(req.headers.host);
-        res.end();
+        if (req.url === '/') {
+            res.end(req.headers.host);
+        }
+        else {
+            res.end(req.url);
+        }
     });
     server.listen(function() {
         var port = server.address().port;
@@ -105,6 +109,50 @@ test('override Host header with local-host', function(done) {
 
         res.on('end', function() {
             assert.equal(body, '127.0.0.1');
+            done();
+        });
+    });
+
+    req.end();
+});
+
+suite('path');
+
+test('setup localtunnel client', function(done) {
+    var opt = {
+        path: '/some-path'
+    };
+    localtunnel(test._fake_port, opt, function(err, tunnel) {
+        assert.ifError(err);
+        assert.ok(new RegExp('^https:\/\/.*localtunnel.me' + '$').test(tunnel.url));
+        test._fake_url = tunnel.url;
+        done();
+    });
+});
+
+test('prepend path to tunnel traffic', function(done) {
+    var uri = test._fake_url;
+    var parsed = url.parse(uri);
+
+    var opt = {
+        host: parsed.host,
+        port: 443,
+        headers: {
+            host: parsed.hostname
+        },
+        path: '/'
+    };
+
+    var req = https.request(opt, function(res) {
+        res.setEncoding('utf8');
+        var body = '';
+
+        res.on('data', function(chunk) {
+            body += chunk;
+        });
+
+        res.on('end', function() {
+            assert.equal(body, '/some-path/');
             done();
         });
     });

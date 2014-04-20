@@ -20,7 +20,6 @@ var HeaderHostTransformer = function(opts) {
 
     var self = this;
     self.host = opts.host || 'localhost';
-    self.replaced = false;
 }
 util.inherits(HeaderHostTransformer, Transform);
 
@@ -33,6 +32,32 @@ HeaderHostTransformer.prototype._transform = function (chunk, enc, cb) {
     self.push(chunk.replace(/(\r\nHost: )\S+/, function(match, $1) {
         self._transform = undefined;
         return $1 + self.host;
+    }));
+    cb();
+};
+
+var PathTransformer = function(opts) {
+    if (!(this instanceof PathTransformer)) {
+        return new PathTransformer(opts);
+    }
+
+    opts = opts || {}
+    Transform.call(this, opts);
+
+    var self = this;
+    self.path = opts.path || '';
+}
+util.inherits(PathTransformer, Transform);
+
+PathTransformer.prototype._transform = function (chunk, enc, cb) {
+    var self = this;
+    chunk = chunk.toString();
+
+    // after prepending to the first instance of a path
+    // we just become a regular passthrough
+    self.push(chunk.replace(/(\/)/, function(match, $1) {
+        delete self._transform;
+        return self.path + $1;
     }));
     cb();
 };
@@ -62,8 +87,9 @@ TunnelCluster.prototype.open = function() {
 
     var local_host = opt.local_host;
     var local_port = opt.local_port;
+    var local_path = opt.local_path;
 
-    debug('establishing tunnel %s:%s <> %s:%s', local_host, local_port, remote_host, remote_port);
+    debug('establishing tunnel %s:%d%s <> %s:%d', local_host, local_port, local_path, remote_host, remote_port);
 
     // connection to localtunnel server
     var remote = net.connect({
@@ -93,7 +119,7 @@ TunnelCluster.prototype.open = function() {
             return;
         }
 
-        debug('connecting locally to %s:%d', local_host, local_port);
+        debug('connecting locally to %s:%d%s', local_host, local_port, local_path);
         remote.pause();
 
         // connection to local http server
@@ -136,7 +162,11 @@ TunnelCluster.prototype.open = function() {
             // if user requested something other than localhost
             // then we use host header transform to replace the host header
             if (local_host !== 'localhost') {
-                stream = remote.pipe(HeaderHostTransformer({ host: local_host }));
+                stream = stream.pipe(HeaderHostTransformer({ host: local_host }));
+            }
+
+            if (local_path !== '') {
+                stream = stream.pipe(PathTransformer({ path: local_path }));
             }
 
             stream.pipe(local).pipe(remote);
@@ -226,6 +256,7 @@ Tunnel.prototype._establish = function(info) {
 
     info.local_host = opt.local_host || 'localhost';
     info.local_port = opt.port;
+    info.local_path = opt.path || '';
 
     var tunnels = self.tunnel_cluster = TunnelCluster(info);
 
