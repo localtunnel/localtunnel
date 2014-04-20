@@ -16,7 +16,7 @@
     "mocha": "~1.17.0"
   },
   "scripts": {
-    "test": "mocha --ui qunit --reporter list -- test/index.js"
+    "test": "mocha --ui qunit --reporter list --timeout 10000 -- test/index.js"
   },
   "bin": {
     "lt": "./bin/client"
