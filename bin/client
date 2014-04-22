@@ -3,7 +3,6 @@ var lt_client = require('../client');
 
 var argv = require('optimist')
     .usage('Usage: $0 --port [num]')
-    .demand(['port'])
     .options('host', {
         default: 'http://localtunnel.me',
         describe: 'upstream server providing forwarding'
@@ -14,16 +13,30 @@ var argv = require('optimist')
     .options('local-host', {
         describe: 'tunnel traffic to this host instead of localhost'
     })
+    .options('version', {
+        describe: 'print version and exit'
+    })
     .default('local-host', 'localhost')
     .describe('port', 'internal http server port')
     .argv;
+
+if (argv.version) {
+    console.log(require('../package.json').version);
+    process.exit(0);
+}
+
+if (argv.port == null) {
+    require('optimist').showHelp();
+    console.error('Missing required arguments: port');
+    process.exit(1);
+}
 
 var opt = {
     host: argv.host,
     port: argv.port,
     local_host: argv['local-host'],
     subdomain: argv.subdomain,
-}
+};
 
 lt_client(opt.port, opt, function(err, tunnel) {
     if (err) {
