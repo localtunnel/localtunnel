@@ -312,4 +312,5 @@ module.exports = function localtunnel(port, opt, fn) {
 
         fn(null, client);
     });
+    return client;
 };
