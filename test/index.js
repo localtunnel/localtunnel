@@ -68,7 +68,51 @@ test('request specific domain', function(done) {
     });
 });
 
-suite('local-host');
+suite('--local-host localhost');
+
+test('setup localtunnel client', function(done) {
+    var opt = {
+        local_host: 'localhost'
+    };
+    localtunnel(test._fake_port, opt, function(err, tunnel) {
+        assert.ifError(err);
+        assert.ok(new RegExp('^https:\/\/.*localtunnel.me' + '$').test(tunnel.url));
+        test._fake_url = tunnel.url;
+        done();
+    });
+});
+
+test('override Host header with local-host', function(done) {
+    var uri = test._fake_url;
+    var parsed = url.parse(uri);
+
+    var opt = {
+        host: parsed.host,
+        port: 443,
+        headers: {
+            host: parsed.hostname
+        },
+        path: '/'
+    };
+
+    var req = https.request(opt, function(res) {
+        res.setEncoding('utf8');
+        var body = '';
+
+        res.on('data', function(chunk) {
+            body += chunk;
+        });
+
+        res.on('end', function() {
+            assert.equal(body, 'localhost');
+            done();
+        });
+    });
+
+    req.end();
+});
+
+suite('--local-host 127.0.0.1');
 
 test('setup localtunnel client', function(done) {
     var opt = {
@@ -111,3 +155,4 @@ test('override Host header with local-host', function(done) {
 
     req.end();
 });
+
