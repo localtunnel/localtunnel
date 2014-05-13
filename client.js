@@ -30,10 +30,14 @@ HeaderHostTransformer.prototype._transform = function (chunk, enc, cb) {
 
     // after replacing the first instance of the Host header
     // we just become a regular passthrough
-    self.push(chunk.replace(/(\r\nHost: )\S+/, function(match, $1) {
-        self._transform = undefined;
-        return $1 + self.host;
-    }));
+    if (!self.replaced) {
+        self.push(chunk.replace(/(\r\nHost: )\S+/, function(match, $1) {
+            self.replaced = true;
+            return $1 + self.host;
+        }));
+    } else {
+        self.push(chunk);
+    }
     cb();
 };
 
@@ -60,7 +64,7 @@ TunnelCluster.prototype.open = function() {
     var remote_host = opt.remote_host;
     var remote_port = opt.remote_port;
 
-    var local_host = opt.local_host;
+    var local_host = opt.local_host || 'localhost';
     var local_port = opt.local_port;
 
     debug('establishing tunnel %s:%s <> %s:%s', local_host, local_port, remote_host, remote_port);
@@ -133,10 +137,11 @@ TunnelCluster.prototype.open = function() {
 
             var stream = remote;
 
-            // if user requested something other than localhost
+            // if user requested specific local host
             // then we use host header transform to replace the host header
-            if (local_host !== 'localhost') {
-                stream = remote.pipe(HeaderHostTransformer({ host: local_host }));
+            if (opt.local_host) {
+                debug('transform Host header to %s', opt.local_host);
+                stream = remote.pipe(HeaderHostTransformer({ host: opt.local_host }));
             }
 
             stream.pipe(local).pipe(remote);
@@ -224,7 +229,7 @@ Tunnel.prototype._establish = function(info) {
     var self = this;
     var opt = self._opt;
 
-    info.local_host = opt.local_host || 'localhost';
+    info.local_host = opt.local_host;
     info.local_port = opt.port;
 
     var tunnels = self.tunnel_cluster = TunnelCluster(info);
