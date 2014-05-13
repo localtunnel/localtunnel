@@ -30,10 +30,14 @@ HeaderHostTransformer.prototype._transform = function (chunk, enc, cb) {
 
     // after replacing the first instance of the Host header
     // we just become a regular passthrough
-    self.push(chunk.replace(/(\r\nHost: )\S+/, function(match, $1) {
-        self._transform = undefined;
-        return $1 + self.host;
-    }));
+    if (!self.replaced) {
+        self.push(chunk.replace(/(\r\nHost: )\S+/, function(match, $1) {
+            self.replaced = true;
+            return $1 + self.host;
+        }));
+    } else {
+        self.push(chunk);
+    }
     cb();
 };
 
