@@ -156,3 +156,33 @@ test('override Host header with local-host', function(done) {
     req.end();
 });
 
+test('send chunked request', function(done) {
+    var uri = test._fake_url;
+    var parsed = url.parse(uri);
+
+    var opt = {
+        host: parsed.host,
+        port: 443,
+        headers: {
+            host: parsed.hostname,
+            'Transfer-Encoding': 'chunked'
+        },
+        path: '/'
+    };
+
+    var req = https.request(opt, function(res) {
+        res.setEncoding('utf8');
+        var body = '';
+
+        res.on('data', function(chunk) {
+            body += chunk;
+        });
+
+        res.on('end', function() {
+            assert.equal(body, '127.0.0.1');
+            done();
+        });
+    });
+
+    req.end(require('crypto').randomBytes(1024 * 8).toString('base64'));
+});
