@@ -35,9 +35,11 @@ HeaderHostTransformer.prototype._transform = function (chunk, enc, cb) {
             self.replaced = true;
             return $1 + self.host;
         }));
-    } else {
+    }
+    else {
         self.push(chunk);
     }
+
     cb();
 };
 
