@@ -10,7 +10,9 @@
   "dependencies": {
     "request": "2.11.4",
     "optimist": "0.3.4",
-    "debug": "0.7.4"
+    "debug": "0.7.4",
+    "openurl": "latest",
+    "keypress": "latest"
   },
   "devDependencies": {
     "mocha": "~1.17.0"
