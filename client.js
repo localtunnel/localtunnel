@@ -8,6 +8,8 @@ var debug = require('debug')('localtunnel:client');
 var stream = require('stream');
 var util = require('util');
 
+var keypress = require('keypress');
+
 var Transform = stream.Transform;
 
 var HeaderHostTransformer = function(opts) {
@@ -239,6 +241,20 @@ Tunnel.prototype._establish = function(info) {
     // only emit the url the first time
     tunnels.once('open', function() {
         self.emit('url', info.url);
+
+        console.log("Press Ctrl+O to open url in browser...");
+
+        keypress(process.stdin);
+
+        process.stdin.on('keypress', function (ch, key) {
+            if (key && key.ctrl && key.name == 'o') {
+                process.stdin.pause();
+                require('openurl').open(info.url);
+            }
+        });
+
+        process.stdin.setRawMode(true);
+        process.stdin.resume();
     });
 
     var tunnel_count = 0;
