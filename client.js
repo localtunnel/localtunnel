@@ -83,7 +83,7 @@ TunnelCluster.prototype.open = function() {
         if (err.code === 'ECONNREFUSED') {
             self.emit('error', new Error('connection refused: ' + remote_host + ':' + remote_port + ' (check your firewall settings)'));
         }
-        else {
+        else if (err.code !== 'ETIMEDOUT') {
             self.emit('error', err);
         }
 
