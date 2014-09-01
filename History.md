@@ -1,3 +1,7 @@
+# UNRELEASED
+
+* don't emit errors for ETIMEDOUT
+
 # 1.2.0 / 2014-04-28
 
 * return `client` from `localtunnel` API instantiation
