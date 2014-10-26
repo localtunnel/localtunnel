@@ -77,19 +77,14 @@ TunnelCluster.prototype.open = function() {
         port: remote_port
     });
 
-    remote.once('error', function(err) {
+    remote.on('error', function(err) {
         // emit connection refused errors immediately, because they
         // indicate that the tunnel can't be established.
         if (err.code === 'ECONNREFUSED') {
             self.emit('error', new Error('connection refused: ' + remote_host + ':' + remote_port + ' (check your firewall settings)'));
         }
-        else if (err.code !== 'ETIMEDOUT') {
-            self.emit('error', err);
-        }
 
-        setTimeout(function() {
-            self.emit('dead');
-        }, 1000);
+        remote.end();
     });
 
     function conn_local() {
