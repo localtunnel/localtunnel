@@ -1,3 +1,7 @@
+# UNRELEASED
+
+* capture all errors on remote socket and restart the tunnel
+
 # 1.4.0 (2014-08-31)
 
 * don't emit errors for ETIMEDOUT
