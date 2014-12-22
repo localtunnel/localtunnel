@@ -42,12 +42,16 @@ Creates a new localtunnel to the specified local `port`. `fn` will be called onc
 ```javascript
 var localtunnel = require('localtunnel');
 
-localtunnel(port, function(err, tunnel) {
+var tunnel = localtunnel(port, function(err, tunnel) {
     if (err) ...
 
     // the assigned public url for your tunnel
     // i.e. https://abcdefgjhij.localtunnel.me
     tunnel.url;
+});
+
+tunnel.on('close', function() {
+    // tunnels are closed
 });
 ```
 
