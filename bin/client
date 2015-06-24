@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 var lt_client = require('../client');
+var open_url = require('openurl');
 
 var argv = require('optimist')
     .usage('Usage: $0 --port [num]')
@@ -15,6 +16,9 @@ var argv = require('optimist')
     })
     .options('version', {
         describe: 'print version and exit'
+    })
+    .options('open', {
+        describe: 'opens url in your browser'
     })
     .describe('port', 'internal http server port')
     .argv;
@@ -43,7 +47,11 @@ lt_client(opt.port, opt, function(err, tunnel) {
     }
 
     console.log('your url is: %s', tunnel.url);
-
+    
+    if (argv.open) {
+        open_url.open(tunnel.url);
+    }
+    
     tunnel.on('error', function(err) {
         throw err;
     });
