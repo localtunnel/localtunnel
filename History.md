@@ -1,3 +1,8 @@
+# UNRELEASED
+
+* keep sockets alive after connecting
+* add --open param to CLI
+
 # 1.5.0 (2014-10-25)
 
 * capture all errors on remote socket and restart the tunnel
