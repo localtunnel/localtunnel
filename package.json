@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "request": "2.11.4",
-    "optimist": "0.3.4",
+    "yargs": "3.15.0",
     "debug": "0.7.4",
     "openurl": "1.1.0"
   },
