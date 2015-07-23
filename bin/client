@@ -2,35 +2,37 @@
 var lt_client = require('../client');
 var open_url = require('openurl');
 
-var argv = require('optimist')
-    .usage('Usage: $0 --port [num]')
-    .options('host', {
-        default: 'http://localtunnel.me',
-        describe: 'upstream server providing forwarding'
+var argv = require('yargs')
+    .usage('Usage: $0 --port [num] <options>')
+    .option('h', {
+        alias: 'host',
+        describe: 'Upstream server providing forwarding',
+        default: 'http://localtunnel.me'
     })
-    .options('subdomain', {
-        describe: 'request this subdomain'
+    .option('s', {
+        alias: 'subdomain',
+        describe: 'Request this subdomain'
     })
-    .options('local-host', {
-        describe: 'tunnel traffic to this host instead of localhost, override Host header to this host'
+    .option('l', {
+        alias: 'local-host',
+        describe: 'Tunnel traffic to this host instead of localhost, override Host header to this host'
     })
-    .options('version', {
-        describe: 'print version and exit'
-    })
-    .options('open', {
+    .options('o', {
+        alias: 'open',
         describe: 'opens url in your browser'
     })
-    .describe('port', 'internal http server port')
+    .option('p', {
+        alias: 'port',
+        describe: 'Internal http server port',
+    })
+    .require('port')
+    .help('help', 'Show this help and exit')
+    .version(require('../package').version)
     .argv;
 
-if (argv.version) {
-    console.log(require('../package.json').version);
-    process.exit(0);
-}
-
-if (argv.port == null) {
-    require('optimist').showHelp();
-    console.error('Missing required arguments: port');
+if (typeof argv.port !== 'number') {
+    require('yargs').showHelp();
+    console.error('port must be a number');
     process.exit(1);
 }
 
@@ -47,11 +49,11 @@ lt_client(opt.port, opt, function(err, tunnel) {
     }
 
     console.log('your url is: %s', tunnel.url);
-    
+
     if (argv.open) {
         open_url.open(tunnel.url);
     }
-    
+
     tunnel.on('error', function(err) {
         throw err;
     });
