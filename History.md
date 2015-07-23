@@ -1,4 +1,4 @@
-# UNRELEASED
+# 1.7.0 (2015-07-22)
 
 * add short arg options
 
