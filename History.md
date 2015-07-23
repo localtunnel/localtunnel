@@ -1,3 +1,7 @@
+# UNRELEASED
+
+* add short arg options
+
 # 1.6.0 (2015-05-15)
 
 * keep sockets alive after connecting
