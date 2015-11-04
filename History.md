@@ -1,4 +1,4 @@
-# UNRELEASED
+# 1.8.0 (2015-11-04)
 
 * pass socket errors up to top level
 
