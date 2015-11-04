@@ -1,3 +1,7 @@
+# UNRELEASED
+
+* pass socket errors up to top level
+
 # 1.7.0 (2015-07-22)
 
 * add short arg options
