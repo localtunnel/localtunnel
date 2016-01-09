@@ -71,7 +71,7 @@ The `tunnel` instance returned to your callback emits the following events
 |error|err|fires when an error happens on the tunnel|
 |close||fires when the tunnel has closed|
 
-The `tunnel instance has the following methods
+The `tunnel` instance has the following methods
 
 |method|args|description|
 |----|----|----|
