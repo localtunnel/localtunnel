@@ -1,4 +1,4 @@
-# UNRELEASED
+# 1.8.1 (2016-01-20)
 
 * fix bug w/ HostHeaderTransformer and binary data
 
