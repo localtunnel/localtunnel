@@ -13,7 +13,7 @@
     "yargs": "3.29.0",
     "debug": "2.2.0",
     "openurl": "1.1.0",
-    "ms" : "0.7.0"
+    "ms" : "^0.7.0"
   },
   "devDependencies": {
     "mocha": "~1.17.0"
