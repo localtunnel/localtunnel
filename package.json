@@ -9,7 +9,7 @@
     "url": "git://github.com/shtylman/localtunnel.git"
   },
   "dependencies": {
-    "request": "2.65.0",
+    "request": "2.74.0",
     "yargs": "3.29.0",
     "debug": "2.2.0",
     "openurl": "1.1.0"
