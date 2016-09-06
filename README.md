@@ -85,7 +85,7 @@ Clients in other languages
 
 ## server ##
 
-See [localtunne/localtunnel-server](//github.com/localtunnel/server) for details on the server that powers localtunnel.
+See [localtunnel/server](//github.com/localtunnel/server) for details on the server that powers localtunnel.
 
 ## License ##
 MIT
