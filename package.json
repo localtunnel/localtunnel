@@ -6,10 +6,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/shtylman/localtunnel.git"
+    "url": "git://github.com/localtunnel/localtunnel.git"
   },
   "dependencies": {
-    "request": "2.65.0",
+    "request": "2.78.0",
     "yargs": "3.29.0",
     "debug": "2.2.0",
     "openurl": "1.1.0"
