@@ -1,5 +1,6 @@
 # UNRELEASED
 
+* fix host header transform
 * update request dependency
 
 # 1.8.1 (2016-01-20)
