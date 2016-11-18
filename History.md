@@ -1,4 +1,4 @@
-# UNRELEASED
+# 1.8.2 (2016-11-17)
 
 * fix host header transform
 * update request dependency
