@@ -33,6 +33,19 @@ Below are some common arguments. See `lt --help` for additional arguments
 * `--subdomain` request a named subdomain on the localtunnel server (default is random characters)
 * `--local-host` proxy to a hostname other than localhost
 
+### Config file
+
+You can store any argument in a config file : Create the file `~/.localtunnel/config.json`. You can set there the parameters.
+
+Example:
+```
+{
+  "host": "http://example.com:3333",
+  "port": 1234
+}
+```
+Don't forget the http / https scheme before the url.
+
 ## API ##
 
 The localtunnel client is also usable through an API (for test integration, automation, etc)

@@ -1,46 +1,46 @@
 #!/usr/bin/env node
 var lt_client = require('../client');
 var open_url = require('openurl');
+var nconf = require('nconf');
+const path = require('path');
+const os = require('os');
 
-var argv = require('yargs')
-    .usage('Usage: $0 --port [num] <options>')
-    .option('h', {
-        alias: 'host',
-        describe: 'Upstream server providing forwarding',
-        default: 'http://localtunnel.me'
-    })
-    .option('s', {
-        alias: 'subdomain',
-        describe: 'Request this subdomain'
-    })
-    .option('l', {
-        alias: 'local-host',
-        describe: 'Tunnel traffic to this host instead of localhost, override Host header to this host'
-    })
-    .options('o', {
-        alias: 'open',
-        describe: 'opens url in your browser'
-    })
-    .option('p', {
-        alias: 'port',
-        describe: 'Internal http server port',
-    })
-    .require('port')
-    .help('help', 'Show this help and exit')
-    .version(require('../package').version)
-    .argv;
+nconf.argv({'h': {
+      alias: 'host',
+      describe: 'Upstream server providing forwarding'
+  },
+  's': {
+      alias: 'subdomain',
+      describe: 'Request this subdomain'
+  },
+  'l': {
+      alias: 'local-host',
+      describe: 'Tunnel traffic to this host instead of localhost, override Host header to this host'
+  },
+  'o': {
+      alias: 'open',
+      describe: 'opens url in your browser'
+  },
+  'p': {
+      alias: 'port',
+      describe: 'Internal http server port',
+  }});
 
-if (typeof argv.port !== 'number') {
+nconf.env();
+nconf.file(path.join(os.homedir(), '.localtunnel/config.json'));
+nconf.defaults({
+  "host": "localtunnel.me"
+})
+if (typeof nconf.get("port") !== 'number') {
     require('yargs').showHelp();
     console.error('port must be a number');
     process.exit(1);
 }
 
 var opt = {
-    host: argv.host,
-    port: argv.port,
-    local_host: argv['local-host'],
-    subdomain: argv.subdomain,
+    host: nconf.get("host"),
+    port: nconf.get("port"),
+    subdomain: nconf.get("subdomain"),
 };
 
 lt_client(opt.port, opt, function(err, tunnel) {
@@ -50,7 +50,7 @@ lt_client(opt.port, opt, function(err, tunnel) {
 
     console.log('your url is: %s', tunnel.url);
 
-    if (argv.open) {
+    if (nconf.get("open")) {
         open_url.open(tunnel.url);
     }
 
