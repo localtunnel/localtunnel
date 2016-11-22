@@ -13,6 +13,10 @@ module.exports = function localtunnel(port, opt, fn) {
     opt.port = port;
 
     var client = Tunnel(opt);
+
+    // connect tunnel errors to the callback above
+    client.on('error', fn);
+
     client.open(function(err) {
         if (err) {
             return fn(err);
