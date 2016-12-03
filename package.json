@@ -8,6 +8,7 @@
     "type": "git",
     "url": "git://github.com/localtunnel/localtunnel.git"
   },
+  "main" : "./client.js",
   "dependencies": {
     "request": "2.78.0",
     "yargs": "3.29.0",
