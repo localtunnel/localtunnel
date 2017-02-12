@@ -33,6 +33,12 @@ Below are some common arguments. See `lt --help` for additional arguments
 * `--subdomain` request a named subdomain on the localtunnel server (default is random characters)
 * `--local-host` proxy to a hostname other than localhost
 
+You may also specify arguments via env variables.  E.x.
+
+```
+PORT=3000 lt
+```
+
 ## API ##
 
 The localtunnel client is also usable through an API (for test integration, automation, etc)
