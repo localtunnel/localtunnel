@@ -43,20 +43,30 @@ var opt = {
     subdomain: argv.subdomain,
 };
 
-lt_client(opt.port, opt, function(err, tunnel) {
-    if (err) {
-        throw err;
-    }
+var client_fn = function () {
+    lt_client(opt.port, opt, function(err, tunnel) {
+        if (err) {
+//             throw err;
+            console.log("Error ", err);
+        }
 
-    console.log('your url is: %s', tunnel.url);
+        console.log('your url is: %s', tunnel.url);
 
-    if (argv.open) {
-        open_url.open(tunnel.url);
-    }
+        if (argv.open) {
+            open_url.open(tunnel.url);
+        }
 
-    tunnel.on('error', function(err) {
-        throw err;
+        tunnel.on('error', function(err) {
+            throw err;
+            try {
++               console.log("Error: $s", err);
+                tunnel.close();
+            } finally {
+                setTimeout(client_fn, 10000);
+            }
+        });
     });
-});
+}
 
+client_fn();
 // vim: ft=javascript
