@@ -1,4 +1,4 @@
-# UNRELEASED
+# 1.8.3 (2017-06-11)
 
 * update request dependency
 * update debug dependency
