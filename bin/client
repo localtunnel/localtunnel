@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 var lt_client = require('../client');
-var open_url = require('openurl');
 
 var argv = require('yargs')
     .usage('Usage: $0 --port [num] <options>')
@@ -51,6 +50,7 @@ lt_client(opt.port, opt, function(err, tunnel) {
     console.log('your url is: %s', tunnel.url);
 
     if (argv.open) {
+        var open_url = require('openurl');
         open_url.open(tunnel.url);
     }
 
