@@ -50,6 +50,9 @@ lt_client(opt.port, opt, function(err, tunnel) {
     console.log('your url is: %s', tunnel.url);
 
     if (argv.open) {
+        // require 'openurl' only when needed, as it will
+        // crash on some systems that the rest of the
+        // codebase normally runs on. (i.e., Android)
         var open_url = require('openurl');
         open_url.open(tunnel.url);
     }
