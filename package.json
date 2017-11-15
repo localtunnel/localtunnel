@@ -11,7 +11,7 @@
   "dependencies": {
     "request": "2.81.0",
     "yargs": "3.29.0",
-    "debug": "2.6.8",
+    "debug": "2.6.9",
     "openurl": "1.1.1"
   },
   "devDependencies": {
