@@ -83,6 +83,8 @@ Clients in other languages
 
 *go* [gotunnelme](https://github.com/NoahShen/gotunnelme)
 
+*go* [go-localtunnel](https://github.com/localtunnel/go-localtunnel)
+
 ## server ##
 
 See [localtunnel/server](//github.com/localtunnel/server) for details on the server that powers localtunnel.
