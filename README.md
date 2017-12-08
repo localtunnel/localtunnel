@@ -30,7 +30,7 @@ You can restart your local server all you want, ```lt``` is smart enough to dete
 
 Below are some common arguments. See `lt --help` for additional arguments
 
-* `--subdomain` request a named subdomain on the localtunnel server (default is random characters)
+* `--subdomain` request a specific subdomain on the localtunnel server
 * `--local-host` proxy to a hostname other than localhost
 
 ## API ##
