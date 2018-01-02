@@ -9,10 +9,10 @@
     "url": "git://github.com/localtunnel/localtunnel.git"
   },
   "dependencies": {
-    "request": "2.81.0",
-    "yargs": "3.29.0",
+    "axios": "^0.17.1",
     "debug": "2.6.8",
-    "openurl": "1.1.1"
+    "openurl": "1.1.1",
+    "yargs": "3.29.0"
   },
   "devDependencies": {
     "mocha": "~1.17.0"
