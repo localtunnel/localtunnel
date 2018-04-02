@@ -12,7 +12,7 @@
     "axios": "0.17.1",
     "debug": "2.6.8",
     "openurl": "1.1.1",
-    "yargs": "3.29.0"
+    "yargs": "6.6.0"
   },
   "devDependencies": {
     "mocha": "~1.17.0"
