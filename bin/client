@@ -25,7 +25,12 @@ var argv = require('yargs')
         alias: 'port',
         describe: 'Internal http server port',
     })
+    .option('d', {
+        alias: 'debug-logs',
+        describe: 'Print Request Headers',
+    })
     .require('port')
+    .boolean('debug-logs')
     .help('help', 'Show this help and exit')
     .version(require('../package').version)
     .argv;
@@ -41,6 +46,7 @@ var opt = {
     port: argv.port,
     local_host: argv['local-host'],
     subdomain: argv.subdomain,
+    debug_logs: argv['debug-logs'],
 };
 
 lt_client(opt.port, opt, function(err, tunnel) {
