@@ -2,17 +2,17 @@
   "author": "Roman Shtylman <shtylman@gmail.com>",
   "name": "localtunnel",
   "description": "expose localhost to the world",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git://github.com/localtunnel/localtunnel.git"
   },
   "dependencies": {
-    "request": "2.78.0",
-    "yargs": "6.6.0",
-    "debug": "2.2.0",
-    "openurl": "1.1.0"
+    "axios": "0.17.1",
+    "debug": "2.6.8",
+    "openurl": "1.1.1",
+    "yargs": "6.6.0"
   },
   "devDependencies": {
     "mocha": "~1.17.0"

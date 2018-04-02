@@ -8,7 +8,7 @@ var argv = require('yargs')
     .option('h', {
         alias: 'host',
         describe: 'Upstream server providing forwarding',
-        default: 'http://localtunnel.me',
+        default: 'https://localtunnel.me',
     })
     .option('s', {
         alias: 'subdomain',
@@ -26,7 +26,12 @@ var argv = require('yargs')
         alias: 'port',
         describe: 'Internal http server port',
     })
+    .option('d', {
+        alias: 'debug-logs',
+        describe: 'Print Request Headers',
+    })
     .require('port')
+    .boolean('debug-logs')
     .help('help', 'Show this help and exit')
     .version(require('../package').version)
     .argv;
@@ -42,6 +47,7 @@ var opt = {
     port: argv.port,
     local_host: argv['local-host'],
     subdomain: argv.subdomain,
+    debug_logs: argv['debug-logs'],
 };
 
 lt_client(opt.port, opt, function(err, tunnel) {

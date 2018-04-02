@@ -1,3 +1,9 @@
+# 1.8.3 (2017-06-11)
+
+* update request dependency
+* update debug dependency
+* update openurl dependency
+
 # 1.8.2 (2016-11-17)
 
 * fix host header transform
