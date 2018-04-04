@@ -74,6 +74,7 @@ The `tunnel` instance returned to your callback emits the following events
 
 |event|args|description|
 |----|----|----|
+|request|info|fires when a request is processed by the tunnel, contains _method_ and _path_ fields|
 |error|err|fires when an error happens on the tunnel|
 |close||fires when the tunnel has closed|
 

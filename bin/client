@@ -26,12 +26,11 @@ var argv = require('yargs')
         alias: 'port',
         describe: 'Internal http server port',
     })
-    .option('d', {
-        alias: 'debug-logs',
-        describe: 'Print Request Headers',
+    .option('print-requests', {
+        describe: 'Print basic request info',
     })
     .require('port')
-    .boolean('debug-logs')
+    .boolean('print-requests')
     .help('help', 'Show this help and exit')
     .version(require('../package').version)
     .argv;
@@ -47,8 +46,9 @@ var opt = {
     port: argv.port,
     local_host: argv['local-host'],
     subdomain: argv.subdomain,
-    debug_logs: argv['debug-logs'],
 };
+
+const PrintRequests = argv['print-requests'];
 
 lt_client(opt.port, opt, function(err, tunnel) {
     if (err) {
@@ -64,6 +64,12 @@ lt_client(opt.port, opt, function(err, tunnel) {
     tunnel.on('error', function(err) {
         throw err;
     });
+
+    if (PrintRequests) {
+        tunnel.on('request', function(info) {
+            console.log(new Date().toString(), info.method, info.path);
+        });
+    }
 });
 
 // vim: ft=javascript
