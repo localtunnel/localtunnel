@@ -1,3 +1,9 @@
+# UNRELEASED
+
+* Add _request_ event to Tunnel emitter
+* Update yargs to support config via environment variables
+* Add basic request logging when --print-requests argument is used
+
 # 1.8.3 (2017-06-11)
 
 * update request dependency
