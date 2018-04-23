@@ -4,7 +4,7 @@ var open_url = require('openurl');
 
 var argv = require('yargs')
     .usage('Usage: $0 --port [num] <options>')
-    .env(true)
+    .env('LOCALTUNNEL')
     .option('h', {
         alias: 'host',
         describe: 'Upstream server providing forwarding',
