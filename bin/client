@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 var lt_client = require('../client');
 var open_url = require('openurl');
+var config = require('../lib/config');
+var _ = require('lodash');
 
 var argv = require('yargs')
     .usage('Usage: $0 --port [num] <options>')
@@ -29,47 +31,62 @@ var argv = require('yargs')
     .option('print-requests', {
         describe: 'Print basic request info',
     })
-    .require('port')
+    .option('port', {
+        describe: 'Port on which the service to be tunneled runs'
+    })
     .boolean('print-requests')
     .help('help', 'Show this help and exit')
     .version(require('../package').version)
     .argv;
+    
+const PrintRequests = argv['print-requests'];
 
-if (typeof argv.port !== 'number') {
+if (argv.port && typeof argv.port !== 'number') {
     require('yargs').showHelp();
     console.error('port must be a number');
     process.exit(1);
 }
 
-var opt = {
-    host: argv.host,
-    port: argv.port,
-    local_host: argv['local-host'],
-    subdomain: argv.subdomain,
-};
+const tunnels = _.cloneDeep(config.tunnels);
 
-const PrintRequests = argv['print-requests'];
-
-lt_client(opt.port, opt, function(err, tunnel) {
-    if (err) {
-        throw err;
-    }
-
-    console.log('your url is: %s', tunnel.url);
-
-    if (argv.open) {
-        open_url.open(tunnel.url);
-    }
-
-    tunnel.on('error', function(err) {
-        throw err;
+if (argv.port) {
+    tunnels.push({
+        'subdomain': argv.subdomain,
+        'host': argv.host,
+        'port': argv.port,
+        'local_host': argv['local-host']
     });
+}
 
-    if (PrintRequests) {
-        tunnel.on('request', function(info) {
-            console.log(new Date().toString(), info.method, info.path);
+if (!tunnels.length) {
+    console.log(`No tunnels configured.`);
+    process.exit(1);
+}
+
+for (const opt of tunnels) {
+    
+    lt_client(opt.port, opt, function(err, tunnel) {
+        if (err) {
+            throw err;
+        }
+    
+        console.log('your url is: %s', tunnel.url);
+    
+        if (argv.open) {
+            open_url.open(tunnel.url);
+        }
+    
+        tunnel.on('error', function(err) {
+            throw err;
         });
-    }
-});
+    
+        if (PrintRequests) {
+            tunnel.on('request', function(info) {
+                console.log(new Date().toString(), info.method, info.path);
+            });
+        }
+    });
+    
+}
 
 // vim: ft=javascript

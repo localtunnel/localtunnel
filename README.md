@@ -47,6 +47,12 @@ The localtunnel client can also be configured with an _optional_, YAML-based con
 host: https://server.com
 # Some localtunnel servers require an authentication token
 token: VJtD3D6BXi9mZmqFT9ezAYq9fLjwUQ4WPZWUiaopRsy3HvMotRdhgbwiCuzrnhYv
+tunnels:
+  - subdomain: foobar
+    port: 3007
+  - subdomain: beagle
+    local_host: target-server.com
+    port: 3030
 ```
 
 ## API ##
