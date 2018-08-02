@@ -10,7 +10,12 @@
   },
   "dependencies": {
     "axios": "0.17.1",
+    "bluebird": "^3.5.1",
     "debug": "2.6.8",
+    "deep-freeze": "^0.0.1",
+    "find-up": "^3.0.0",
+    "js-yaml": "^3.12.0",
+    "lodash": "^4.17.10",
     "openurl": "1.1.1",
     "yargs": "6.6.0"
   },
