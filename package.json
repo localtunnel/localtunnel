@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "axios": "0.17.1",
-    "debug": "2.6.9",
+    "debug": "^3.0.1",
     "openurl": "1.1.1",
     "yargs": "6.6.0"
   },
