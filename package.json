@@ -1,6 +1,6 @@
 {
   "author": "Roman Shtylman <shtylman@gmail.com>",
-  "name": "localtunnel",
+  "name": "localtunnel-chromatic",
   "description": "expose localhost to the world",
   "version": "1.9.1",
   "license": "MIT",
