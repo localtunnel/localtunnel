@@ -55,7 +55,7 @@ lt_client(opt.port, opt, function(err, tunnel) {
         throw err;
     }
 
-    console.log('your url is: %s', tunnel.url);
+    console.log('your url is: %s, your cachedUrl is %s', tunnel.url, tunnel.cachedUrl);
 
     if (argv.open) {
         open_url.open(tunnel.url);
