@@ -1,12 +1,12 @@
 {
   "author": "Roman Shtylman <shtylman@gmail.com>",
-  "name": "localtunnel-chromatic",
-  "description": "expose localhost to the world",
-  "version": "1.9.1",
+  "name": "@chromaui/localtunnel",
+  "description": "expose localhost to the world [Chroma fork]",
+  "version": "1.9.1-chromatic.1",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/localtunnel/localtunnel.git"
+    "url": "git://github.com/chromaui/localtunnel.git"
   },
   "dependencies": {
     "axios": "0.17.1",
