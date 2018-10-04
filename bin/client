@@ -29,6 +29,25 @@ var argv = require('yargs')
     .option('print-requests', {
         describe: 'Print basic request info',
     })
+    .option('ssh-host', {
+        describe: 'SSH server host for localtunnel server'
+    })
+    .option('ssh-port', {
+        describe: 'SSH server port for localtunnel server'
+    })
+    .option('ssh-user', {
+        describe: 'Username for SSH server'
+    })
+    .option('ssh-pass', {
+        describe: 'Password for SSH server'
+    })
+    .option('ssh-key', {
+        describe: 'Private key for SSH server'
+    })
+    .option('ssh-key-pass', {
+        describe: 'Passphrase for private key'
+    })
+    
     .require('port')
     .boolean('print-requests')
     .help('help', 'Show this help and exit')
@@ -46,6 +65,12 @@ var opt = {
     port: argv.port,
     local_host: argv['local-host'],
     subdomain: argv.subdomain,
+    ssh_host: argv['ssh-host'],
+    ssh_port: argv['ssh-port'],
+    ssh_user: argv['ssh-user'],
+    ssh_pass: argv['ssh-pass'],
+    ssh_key: argv['ssh-key'],
+    ssh_key_pass: argv['ssh-key-pass'],
 };
 
 const PrintRequests = argv['print-requests'];

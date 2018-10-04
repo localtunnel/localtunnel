@@ -12,7 +12,8 @@
     "axios": "0.17.1",
     "debug": "2.6.9",
     "openurl": "1.1.1",
-    "yargs": "6.6.0"
+    "yargs": "6.6.0",
+    "tunnel-ssh": "4.1.4"
   },
   "devDependencies": {
     "mocha": "~1.17.0"
