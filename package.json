@@ -2,7 +2,7 @@
   "author": "Roman Shtylman <shtylman@gmail.com>",
   "name": "@chromaui/localtunnel",
   "description": "expose localhost to the world [Chroma fork]",
-  "version": "1.9.1-chromatic.2",
+  "version": "1.9.1-chromatic.3",
   "license": "MIT",
   "repository": {
     "type": "git",

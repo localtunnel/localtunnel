@@ -1,5 +1,9 @@
 # UNRELEASED
 
+# 1.9.1-chromatic.3
+
+* Support localtunnel server with IP-based tunnel URLs
+
 # 1.9.1 (2018-09-08)
 
 * Update debug to 2.6.9
