@@ -9,9 +9,10 @@
     "url": "git://github.com/localtunnel/localtunnel.git"
   },
   "dependencies": {
-    "axios": "0.17.1",
     "debug": "2.6.9",
     "openurl": "1.1.1",
+    "request": "2.88.0",
+    "request-promise-native": "1.0.7",
     "yargs": "6.6.0"
   },
   "devDependencies": {
