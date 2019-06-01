@@ -1,5 +1,8 @@
 # UNRELEASED
 
+* Update debug to 4.1.1
+* Update axios to 0.19.0
+
 # 1.9.1 (2018-09-08)
 
 * Update debug to 2.6.9
