@@ -1,4 +1,4 @@
-# UNRELEASED
+# 1.9.2 (2019-06-01)
 
 * Update debug to 4.1.1
 * Update axios to 0.19.0
