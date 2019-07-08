@@ -19,7 +19,7 @@ The localtunnel client is also usable through an API (for test integration, auto
 Creates a new localtunnel to the specified local `port`. `fn` will be called once you have been assigned a public localtunnel url. `opts` can be used to request a specific `subdomain`.
 
 ```javascript
-var localtunnel = require('localtunnel');
+var localtunnel = require('@chromaui/localtunnel');
 
 var tunnel = localtunnel(port, function(err, tunnel) {
     if (err) ...

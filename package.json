@@ -1,17 +1,17 @@
 {
   "name": "@chromaui/localtunnel",
-  "description": "expose localhost to the world [Chroma fork]",
+  "description": "Expose localhost to the world",
   "version": "1.10.0",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git://github.com/chromaui/localtunnel.git"
   },
-  "author": "Roman Shtylman <shtylman@gmail.com>",
+  "author": "Gert Hengeveld <gert@hichroma.com> (https://hichroma.com/)",
   "contributors": [
-    "Roman Shtylman <shtylman@gmail.com>",
     "Gert Hengeveld <gert@hichroma.com> (https://hichroma.com/)",
-    "Tom Coleman <tom@hichroma.com> (https://hichroma.com/)"
+    "Tom Coleman <tom@hichroma.com> (https://hichroma.com/)",
+    "Roman Shtylman <shtylman@gmail.com>"
   ],
   "main": "./localtunnel.js",
   "scripts": {
@@ -19,9 +19,7 @@
   },
   "dependencies": {
     "axios": "0.17.1",
-    "debug": "^3.0.1",
-    "openurl": "1.1.1",
-    "yargs": "6.6.0"
+    "debug": "^3.0.1"
   },
   "devDependencies": {
     "mocha": "~1.17.0"
