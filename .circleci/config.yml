@@ -1,0 +1,30 @@
+version: 2
+
+jobs:
+  test:
+    docker:
+      - image: circleci/node:8-jessie
+    steps:
+      - checkout
+      - restore_cache:
+          key: v2-yarn-cache
+      - run:
+          command: yarn install
+      - run:
+          # check out original yarn.lock to maintain cache key as yarn install
+          # on linux may modify it
+          command: git checkout yarn.lock
+      - save_cache:
+          # caches are immutable so we need to create a new one each time
+          # however it will find the old one
+          key: v2-yarn-cache-{{ epoch }}
+          paths:
+            - ~/.cache
+      - run:
+          command: yarn test
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test
