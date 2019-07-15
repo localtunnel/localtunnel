@@ -4,10 +4,35 @@ localtunnel exposes your localhost to the world for easy testing and sharing! No
 
 Great for working with browser testing tools like browserling or external api callback services like twilio which require a public url for callbacks.
 
-## installation
+## Installation
 
 ```
 yarn add @chromaui/localtunnel
+```
+
+## CLI usage
+
+Assuming your local server is running on port 8000, just use the `lt` command to start the tunnel.
+
+```
+lt --port 8000
+```
+
+Thats it! It will connect to the tunnel server, setup the tunnel, and tell you what url to use for your testing. This url will remain active for the duration of your session; so feel free to share it with others for happy fun time!
+
+You can restart your local server all you want, `lt` is smart enough to detect this and reconnect once it is back.
+
+### Arguments
+
+Below are some common arguments. See `lt --help` for additional arguments
+
+- `--subdomain` request a named subdomain on the localtunnel server (default is random characters)
+- `--local-host` proxy to a hostname other than localhost
+
+You may also specify arguments via env variables. E.x.
+
+```
+PORT=3000 lt
 ```
 
 ## API

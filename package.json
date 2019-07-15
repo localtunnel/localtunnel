@@ -14,12 +14,17 @@
     "Roman Shtylman <shtylman@gmail.com>"
   ],
   "main": "./localtunnel.js",
+  "bin": {
+    "lt": "./bin/lt.js"
+  },
   "scripts": {
     "test": "mocha --ui qunit --reporter list --timeout 10000 -- *.spec.js"
   },
   "dependencies": {
     "axios": "0.17.1",
-    "debug": "^3.0.1"
+    "debug": "^3.0.1",
+    "openurl": "^1.1.1",
+    "yargs": "^13.3.0"
   },
   "devDependencies": {
     "mocha": "~1.17.0"
