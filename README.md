@@ -39,9 +39,9 @@ PORT=3000 lt
 
 The localtunnel client is also usable through an API (for test integration, automation, etc)
 
-### localtunnel(port [,opts], fn)
+### localtunnel({ port, ...options })
 
-Creates a new localtunnel to the specified local `port`. `fn` will be called once you have been assigned a public localtunnel url. `opts` can be used to request a specific `subdomain`.
+Creates a new localtunnel to the specified local `port`. Will return a Promise that resolves once you have been assigned a public localtunnel url. `options` can be used to request a specific `subdomain`.
 
 ```js
 const localtunnel = require('@chromaui/localtunnel');
@@ -59,8 +59,9 @@ const localtunnel = require('@chromaui/localtunnel');
 })();
 ```
 
-### opts
+### options
 
+- `port` [required] The local port number to expose through localtunnel.
 - `subdomain` A _string_ value requesting a specific subdomain on the proxy server. **Note** You may not actually receive this name depending on availability.
 - `local_host` Proxy to this hostname instead of `localhost`. This will also cause the `Host` header to be re-written to this value in proxied requests.
 
