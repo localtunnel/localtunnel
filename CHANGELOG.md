@@ -1,3 +1,8 @@
+# 2.0.0
+
+- Major refactor of entire codebase using modern ES syntax
+- Simplified API (dropped port arg, should now be specified in options)
+
 # 1.10.1
 
 - upgraded axios version
