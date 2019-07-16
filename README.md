@@ -4,15 +4,13 @@ localtunnel exposes your localhost to the world for easy testing and sharing! No
 
 Great for working with browser testing tools like browserling or external api callback services like twilio which require a public url for callbacks.
 
-## installation
+## Installation
 
 ```
-npm install -g @chromaui/localtunnel
+yarn add @chromaui/localtunnel
 ```
 
-This will install the localtunnel module globally and add the 'lt' client cli tool to your PATH.
-
-## use
+## CLI usage
 
 Assuming your local server is running on port 8000, just use the `lt` command to start the tunnel.
 
@@ -24,7 +22,7 @@ Thats it! It will connect to the tunnel server, setup the tunnel, and tell you w
 
 You can restart your local server all you want, `lt` is smart enough to detect this and reconnect once it is back.
 
-### arguments
+### Arguments
 
 Below are some common arguments. See `lt --help` for additional arguments
 
@@ -46,7 +44,7 @@ The localtunnel client is also usable through an API (for test integration, auto
 Creates a new localtunnel to the specified local `port`. `fn` will be called once you have been assigned a public localtunnel url. `opts` can be used to request a specific `subdomain`.
 
 ```javascript
-var localtunnel = require('localtunnel');
+var localtunnel = require('@chromaui/localtunnel');
 
 var tunnel = localtunnel(port, function(err, tunnel) {
     if (err) ...
