@@ -1,7 +1,7 @@
 {
   "name": "@chromaui/localtunnel",
   "description": "Expose localhost to the world",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -21,7 +21,7 @@
     "test": "mocha --ui qunit --reporter list --timeout 10000 -- *.spec.js"
   },
   "dependencies": {
-    "axios": "0.17.1",
+    "axios": "0.19.0",
     "debug": "^3.0.1",
     "openurl": "^1.1.1",
     "yargs": "^13.3.0"

@@ -1,6 +1,10 @@
+# 1.10.1
+
+- upgraded axios version
+
 # 1.10.0
 
-- Add HTTPS support
+- Add support for tunneling a local HTTPS server
 
 # 1.9.1-chromatic.3
 
