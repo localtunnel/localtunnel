@@ -24,7 +24,7 @@ before(done => {
 });
 
 test('query localtunnel server w/ ident', async done => {
-  const tunnel = await localtunnel({ port: fakePort })
+  const tunnel = await localtunnel({ port: fakePort });
   assert.ok(new RegExp('^https://.*localtunnel.me$').test(tunnel.url));
   
   const parsed = url.parse(tunnel.url);
@@ -45,6 +45,7 @@ test('query localtunnel server w/ ident', async done => {
 
     res.on('end', () => {
       assert(/.*[.]localtunnel[.]me/.test(body), body);
+      tunnel.close();
       done();
     });
   });
@@ -61,7 +62,7 @@ test('request specific domain', async () => {
 
 describe('--local-host localhost', () => {
   test('override Host header with local-host', async done => {
-    const tunnel = await localtunnel({ port: fakePort, local_host: 'localhost' })
+    const tunnel = await localtunnel({ port: fakePort, local_host: 'localhost' });
     assert.ok(new RegExp('^https://.*localtunnel.me$').test(tunnel.url));
     
     const parsed = url.parse(tunnel.url);
@@ -82,6 +83,7 @@ describe('--local-host localhost', () => {
       
       res.on('end', () => {
         assert.equal(body, 'localhost');
+        tunnel.close();
         done();
       });
     });
@@ -92,7 +94,7 @@ describe('--local-host localhost', () => {
 
 describe('--local-host 127.0.0.1', () => {
   test('override Host header with local-host', async done => {
-    const tunnel = await localtunnel({ port: fakePort, local_host: '127.0.0.1' })
+    const tunnel = await localtunnel({ port: fakePort, local_host: '127.0.0.1' });
     assert.ok(new RegExp('^https://.*localtunnel.me$').test(tunnel.url));
     
     const parsed = url.parse(tunnel.url);
@@ -115,6 +117,7 @@ describe('--local-host 127.0.0.1', () => {
 
       res.on('end', () => {
         assert.equal(body, '127.0.0.1');
+        tunnel.close();
         done();
       });
     });
@@ -123,7 +126,7 @@ describe('--local-host 127.0.0.1', () => {
   });
 
   test('send chunked request', async done => {
-    const tunnel = await localtunnel({ port: fakePort, local_host: '127.0.0.1' })
+    const tunnel = await localtunnel({ port: fakePort, local_host: '127.0.0.1' });
     assert.ok(new RegExp('^https://.*localtunnel.me$').test(tunnel.url));
     
     const parsed = url.parse(tunnel.url);
@@ -147,6 +150,7 @@ describe('--local-host 127.0.0.1', () => {
 
       res.on('end', () => {
         assert.equal(body, '127.0.0.1');
+        tunnel.close();
         done();
       });
     });
