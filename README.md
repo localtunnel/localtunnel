@@ -1,18 +1,32 @@
-# @chromaui/localtunnel
+# localtunnel
 
 localtunnel exposes your localhost to the world for easy testing and sharing! No need to mess with DNS or deploy just to have others test out your changes.
 
 Great for working with browser testing tools like browserling or external api callback services like twilio which require a public url for callbacks.
 
-## Installation
+## Quickstart
 
 ```
-yarn add @chromaui/localtunnel
+npx localtunnel --port 8000
+```
+
+## Installation
+
+### Globally
+
+```
+npm install -g localtunnel
+```
+
+### As a dependency in your project
+
+```
+yarn add localtunnel
 ```
 
 ## CLI usage
 
-Assuming your local server is running on port 8000, just use the `lt` command to start the tunnel.
+When localtunnel is installed globally, just use the `lt` command to start the tunnel.
 
 ```
 lt --port 8000
@@ -39,9 +53,9 @@ PORT=3000 lt
 
 The localtunnel client is also usable through an API (for test integration, automation, etc)
 
-### localtunnel({ port, ...options })
+### localtunnel(port [,options][,callback])
 
-Creates a new localtunnel to the specified local `port`. Will return a Promise that resolves once you have been assigned a public localtunnel url. `options` can be used to request a specific `subdomain`.
+Creates a new localtunnel to the specified local `port`. Will return a Promise that resolves once you have been assigned a public localtunnel url. `options` can be used to request a specific `subdomain`. A `callback` function can be passed, in which case it won't return a Promise. This exists for backwards compatibility with the old Node-style callback API. You may also pass a single options object with `port` as a property.
 
 ```js
 const localtunnel = require('@chromaui/localtunnel');
@@ -59,7 +73,7 @@ const localtunnel = require('@chromaui/localtunnel');
 })();
 ```
 
-### options
+#### options
 
 - `port` [required] The local port number to expose through localtunnel.
 - `subdomain` A _string_ value requesting a specific subdomain on the proxy server. **Note** You may not actually receive this name depending on availability.
