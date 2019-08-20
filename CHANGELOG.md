@@ -1,19 +1,14 @@
 # 2.0.0
 
-- Major refactor of entire codebase using modern ES syntax
-- JS client is now Promise-based, with backwards compatibility to callback
-
-# 1.10.1
-
-- upgraded axios version
-
-# 1.10.0
-
 - Add support for tunneling a local HTTPS server
+- Add support for localtunnel server with IP-based tunnel URLs
+- Node.js client API is now Promise-based, with backwards compatibility to callback
+- Major refactor of entire codebase using modern ES syntax
 
-# 1.9.1-chromatic.3
+# 1.9.2 (2019-06-01)
 
-- Support localtunnel server with IP-based tunnel URLs
+- Update debug to 4.1.1
+- Update axios to 0.19.0
 
 # 1.9.1 (2018-09-08)
 
