@@ -1,17 +1,17 @@
 {
-  "name": "@chromaui/localtunnel",
+  "name": "localtunnel",
   "description": "Expose localhost to the world",
   "version": "2.0.0",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/chromaui/localtunnel.git"
+    "url": "git://github.com/localtunnel/localtunnel.git"
   },
-  "author": "Gert Hengeveld <gert@hichroma.com> (https://hichroma.com/)",
+  "author": "Roman Shtylman <shtylman@gmail.com>",
   "contributors": [
+    "Roman Shtylman <shtylman@gmail.com>",
     "Gert Hengeveld <gert@hichroma.com> (https://hichroma.com/)",
-    "Tom Coleman <tom@hichroma.com> (https://hichroma.com/)",
-    "Roman Shtylman <shtylman@gmail.com>"
+    "Tom Coleman <tom@hichroma.com> (https://hichroma.com/)"
   ],
   "main": "./localtunnel.js",
   "bin": {
