@@ -1,7 +1,7 @@
 # 2.0.0
 
 - Major refactor of entire codebase using modern ES syntax
-- Simplified API (dropped port arg, should now be specified in options)
+- JS client is now Promise-based, with backwards compatibility to callback
 
 # 1.10.1
 
