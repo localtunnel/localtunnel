@@ -24,7 +24,7 @@ before(done => {
 });
 
 test('query localtunnel server w/ ident', async done => {
-  const tunnel = await localtunnel({ port: fakePort });
+  const tunnel = await localtunnel(fakePort);
   assert.ok(new RegExp('^https://.*localtunnel.me$').test(tunnel.url));
   
   const parsed = url.parse(tunnel.url);
@@ -55,7 +55,7 @@ test('query localtunnel server w/ ident', async done => {
 
 test('request specific domain', async () => {
   const subdomain = Math.random().toString(36).substr(2)
-  const tunnel = await localtunnel({ port: fakePort, subdomain })
+  const tunnel = await localtunnel(fakePort, { subdomain })
   assert.ok(new RegExp(`^https://${subdomain}.localtunnel.me$`).test(tunnel.url));
   tunnel.close();
 });
