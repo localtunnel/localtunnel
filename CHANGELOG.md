@@ -1,3 +1,7 @@
+# 2.0.1
+
+- Restore backwards compatibility
+
 # 2.0.0
 
 - Major refactor of entire codebase using modern ES syntax
