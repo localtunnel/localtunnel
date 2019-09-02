@@ -10,6 +10,10 @@ const { version } = require('../package');
 const { argv } = yargs
   .usage('Usage: lt --port [num] <options>')
   .env(true)
+  .option('p', {
+    alias: 'port',
+    describe: 'Internal HTTP server port',
+  })
   .option('h', {
     alias: 'host',
     describe: 'Upstream server providing forwarding',
@@ -25,11 +29,7 @@ const { argv } = yargs
   })
   .options('o', {
     alias: 'open',
-    describe: 'Opens url in your browser',
-  })
-  .option('p', {
-    alias: 'port',
-    describe: 'Internal http server port',
+    describe: 'Opens the tunnel URL in your browser',
   })
   .option('print-requests', {
     describe: 'Print basic request info',
