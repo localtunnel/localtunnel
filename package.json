@@ -10,8 +10,8 @@
   "author": "Roman Shtylman <shtylman@gmail.com>",
   "contributors": [
     "Roman Shtylman <shtylman@gmail.com>",
-    "Gert Hengeveld <gert@hichroma.com> (https://hichroma.com/)",
-    "Tom Coleman <tom@hichroma.com> (https://hichroma.com/)"
+    "Gert Hengeveld <gert@hichroma.com>",
+    "Tom Coleman <tom@hichroma.com>"
   ],
   "main": "./localtunnel.js",
   "bin": {
