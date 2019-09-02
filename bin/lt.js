@@ -27,6 +27,21 @@ const { argv } = yargs
     alias: 'local-host',
     describe: 'Tunnel traffic to this host instead of localhost, override Host header to this host',
   })
+  .option('local-https', {
+    describe: 'Tunnel traffic to a local HTTPS server',
+  })
+  .option('local-cert', {
+    describe: 'Path to certificate PEM file for local HTTPS server',
+  })
+  .option('local-key', {
+    describe: 'Path to certificate key file for local HTTPS server',
+  })
+  .option('local-ca', {
+    describe: 'Path to certificate authority file for self-signed certificates',
+  })
+  .option('allow-invalid-cert', {
+    describe: 'Disable certificate checks for your local HTTPS server (ignore cert/key/ca options)',
+  })
   .options('o', {
     alias: 'open',
     describe: 'Opens the tunnel URL in your browser',
@@ -35,22 +50,29 @@ const { argv } = yargs
     describe: 'Print basic request info',
   })
   .require('port')
+  .boolean('local-https')
+  .boolean('allow-invalid-cert')
   .boolean('print-requests')
   .help('help', 'Show this help and exit')
   .version(version);
 
 if (typeof argv.port !== 'number') {
   yargs.showHelp();
-  console.error('port must be a number');
+  console.error('\nInvalid argument: `port` must be a number');
   process.exit(1);
 }
 
 (async () => {
   const tunnel = await localtunnel({
-    host: argv.host,
     port: argv.port,
-    local_host: argv['local-host'],
+    host: argv.host,
     subdomain: argv.subdomain,
+    local_host: argv.localHost,
+    local_https: argv.localHttps,
+    local_cert: argv.localCert,
+    local_key: argv.localKey,
+    local_ca: argv.localCa,
+    allow_invalid_cert: argv.allowInvalidCert,
   }).catch(err => {
     throw err;
   });
