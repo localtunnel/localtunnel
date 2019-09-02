@@ -58,7 +58,7 @@ The localtunnel client is also usable through an API (for test integration, auto
 Creates a new localtunnel to the specified local `port`. Will return a Promise that resolves once you have been assigned a public localtunnel url. `options` can be used to request a specific `subdomain`. A `callback` function can be passed, in which case it won't return a Promise. This exists for backwards compatibility with the old Node-style callback API. You may also pass a single options object with `port` as a property.
 
 ```js
-const localtunnel = require('@chromaui/localtunnel');
+const localtunnel = require('localtunnel');
 
 (async () => {
   const tunnel = await localtunnel({ port: 3000 });
