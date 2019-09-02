@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 const openurl = require('openurl');
 const yargs = require('yargs');
@@ -40,7 +41,6 @@ const { argv } = yargs
 
 if (typeof argv.port !== 'number') {
   yargs.showHelp();
-  // eslint-disable-next-line no-console
   console.error('port must be a number');
   process.exit(1);
 }
@@ -59,8 +59,10 @@ if (typeof argv.port !== 'number') {
     throw err;
   });
 
-  // eslint-disable-next-line no-console
-  console.log('your url is: %s, your cachedUrl is %s', tunnel.url, tunnel.cachedUrl);
+  console.log('your url is: %s', tunnel.url);
+  if (tunnel.cachedUrl) {
+    console.log('your cachedUrl is: %s', tunnel.cachedUrl);
+  }
 
   if (argv.open) {
     openurl.open(tunnel.url);
@@ -68,7 +70,6 @@ if (typeof argv.port !== 'number') {
 
   if (argv['print-requests']) {
     tunnel.on('request', info => {
-      // eslint-disable-next-line no-console
       console.log(new Date().toString(), info.method, info.path);
     });
   }
