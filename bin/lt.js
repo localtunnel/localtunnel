@@ -82,6 +82,12 @@ if (typeof argv.port !== 'number') {
   });
 
   console.log('your url is: %s', tunnel.url);
+
+  /**
+   * `cachedUrl` is set when using a proxy server that support resource caching.
+   * This URL generally remains available after the tunnel itself has closed.
+   * @see https://github.com/localtunnel/localtunnel/pull/319#discussion_r319846289
+   */
   if (tunnel.cachedUrl) {
     console.log('your cachedUrl is: %s', tunnel.cachedUrl);
   }
