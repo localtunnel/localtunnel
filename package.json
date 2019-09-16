@@ -1,27 +1,35 @@
 {
-  "author": "Roman Shtylman <shtylman@gmail.com>",
   "name": "localtunnel",
-  "description": "expose localhost to the world",
-  "version": "1.9.2",
+  "description": "Expose localhost to the world",
+  "version": "2.0.0-pre",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git://github.com/localtunnel/localtunnel.git"
   },
+  "author": "Roman Shtylman <shtylman@gmail.com>",
+  "contributors": [
+    "Roman Shtylman <shtylman@gmail.com>",
+    "Gert Hengeveld <gert@hichroma.com>",
+    "Tom Coleman <tom@hichroma.com>"
+  ],
+  "main": "./localtunnel.js",
+  "bin": {
+    "lt": "./bin/lt.js"
+  },
+  "scripts": {
+    "test": "mocha --ui qunit --reporter list --timeout 60000 -- *.spec.js"
+  },
   "dependencies": {
     "axios": "0.19.0",
     "debug": "4.1.1",
     "openurl": "1.1.1",
-    "yargs": "6.6.0"
+    "yargs": "13.3.0"
   },
   "devDependencies": {
     "mocha": "~1.17.0"
   },
-  "scripts": {
-    "test": "mocha --ui qunit --reporter list --timeout 10000 -- test/index.js"
-  },
-  "bin": {
-    "lt": "./bin/client"
-  },
-  "main": "./client.js"
+  "engines": {
+    "node": ">=8.3.0"
+  }
 }
