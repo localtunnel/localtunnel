@@ -1,4 +1,4 @@
-# UNRELEASED
+# 2.0.0 (2019-09-16)
 
 - Add support for tunneling a local HTTPS server
 - Add support for localtunnel server with IP-based tunnel URLs
