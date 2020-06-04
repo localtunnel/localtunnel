@@ -4,6 +4,9 @@ localtunnel exposes your localhost to the world for easy testing and sharing! No
 
 Great for working with browser testing tools like browserling or external api callback services like twilio which require a public url for callbacks.
 
+__This version supports authentification with HTTPS servers__
+
+
 ## Quickstart
 
 ```
@@ -42,6 +45,8 @@ Below are some common arguments. See `lt --help` for additional arguments
 
 - `--subdomain` request a named subdomain on the localtunnel server (default is random characters)
 - `--local-host` proxy to a hostname other than localhost
+- `--username` username for basic authentication
+- `--password` password for basic authentication
 
 You may also specify arguments via env variables. E.x.
 
