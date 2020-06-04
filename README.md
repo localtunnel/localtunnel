@@ -94,7 +94,7 @@ systemctl start localtunnel
 ## Quickstart
 
 ```
-npx localtunnel-auth --port 8000
+npx localtunnel --port 8000
 ```
 
 ## Installation
