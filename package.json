@@ -1,17 +1,18 @@
 {
-  "name": "localtunnel",
+  "name": "localtunnel-auth",
   "description": "Expose localhost to the world",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/localtunnel/localtunnel.git"
+    "url": "git://github.com/drpepper/localtunnel.git"
   },
   "author": "Roman Shtylman <shtylman@gmail.com>",
   "contributors": [
     "Roman Shtylman <shtylman@gmail.com>",
     "Gert Hengeveld <gert@hichroma.com>",
-    "Tom Coleman <tom@hichroma.com>"
+    "Tom Coleman <tom@hichroma.com>",
+    "Jesse Himmelstein <jesse@playcurious.games>"
   ],
   "main": "./localtunnel.js",
   "bin": {

@@ -42,6 +42,14 @@ const { argv } = yargs
   .option('allow-invalid-cert', {
     describe: 'Disable certificate checks for your local HTTPS server (ignore cert/key/ca options)',
   })
+  .option('u', {
+    alias: 'username',
+    describe: 'Username for basic authentication',
+  })
+  .option('w', {
+    alias: 'password', 
+    describe: 'Password for basic authentication',
+  })
   .options('o', {
     alias: 'open',
     describe: 'Opens the tunnel URL in your browser',
@@ -63,7 +71,7 @@ if (typeof argv.port !== 'number') {
 }
 
 (async () => {
-  const tunnel = await localtunnel({
+  const opts = {
     port: argv.port,
     host: argv.host,
     subdomain: argv.subdomain,
@@ -73,7 +81,16 @@ if (typeof argv.port !== 'number') {
     local_key: argv.localKey,
     local_ca: argv.localCa,
     allow_invalid_cert: argv.allowInvalidCert,
-  }).catch(err => {
+  };
+
+  if(argv.username || argv.password) {
+    opts.auth = { 
+      username: argv.username,
+      password: argv.password,
+    }
+  }
+
+  const tunnel = await localtunnel(opts).catch(err => {
     throw err;
   });
 
