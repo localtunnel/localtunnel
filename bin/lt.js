@@ -42,6 +42,9 @@ const { argv } = yargs
   .option('allow-invalid-cert', {
     describe: 'Disable certificate checks for your local HTTPS server (ignore cert/key/ca options)',
   })
+  .option('jwt', {
+    describe: 'Client JSON Web Tokens (JWT) filename',
+  })
   .options('o', {
     alias: 'open',
     describe: 'Opens the tunnel URL in your browser',
@@ -72,6 +75,7 @@ if (typeof argv.port !== 'number') {
     local_cert: argv.localCert,
     local_key: argv.localKey,
     local_ca: argv.localCa,
+    jwt: argv.jwt,
     allow_invalid_cert: argv.allowInvalidCert,
   }).catch(err => {
     throw err;

@@ -32,9 +32,17 @@ When localtunnel is installed globally, just use the `lt` command to start the t
 lt --port 8000
 ```
 
+
 Thats it! It will connect to the tunnel server, setup the tunnel, and tell you what url to use for your testing. This url will remain active for the duration of your session; so feel free to share it with others for happy fun time!
 
 You can restart your local server all you want, `lt` is smart enough to detect this and reconnect once it is back.
+
+If using jwt authentication, there is an helper to create JWT token.
+
+```
+bin/jwt.js -t azerty -n micoli
+bin/jwt.js -t azerty -n micoli -d 1 -j | jq -r ".token"
+```
 
 ### Arguments
 
@@ -83,6 +91,7 @@ const localtunnel = require('localtunnel');
 - `local_cert` (string) Path to certificate PEM file for local HTTPS server.
 - `local_key` (string) Path to certificate key file for local HTTPS server.
 - `local_ca` (string) Path to certificate authority file for self-signed certificates.
+- `jwt` (string) Path to base64 jwt to authenticate to localtunnel proxy server.
 - `allow_invalid_cert` (boolean) Disable certificate checks for your local HTTPS server (ignore cert/key/ca options).
 
 Refer to [tls.createSecureContext](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options) for details on the certificate options.

@@ -23,6 +23,7 @@
   "dependencies": {
     "axios": "0.21.1",
     "debug": "4.3.1",
+    "jsonwebtoken": "^8.5.1",
     "openurl": "1.1.1",
     "yargs": "16.2.0"
   },
