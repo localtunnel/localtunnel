@@ -111,6 +111,8 @@ _go_ [gotunnelme](https://github.com/NoahShen/gotunnelme)
 
 _go_ [go-localtunnel](https://github.com/localtunnel/go-localtunnel)
 
+_C#/.NET_ [localtunnel-client](https://github.com/angelobreuer/localtunnel-client)
+
 ## server
 
 See [localtunnel/server](//github.com/localtunnel/server) for details on the server that powers localtunnel.
