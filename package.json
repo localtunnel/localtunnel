@@ -21,10 +21,10 @@
     "test": "mocha --ui qunit --reporter list --timeout 60000 -- *.spec.js"
   },
   "dependencies": {
-    "axios": "0.19.0",
-    "debug": "4.1.1",
+    "axios": "0.21.1",
+    "debug": "4.3.1",
     "openurl": "1.1.1",
-    "yargs": "13.3.0"
+    "yargs": "16.2.0"
   },
   "devDependencies": {
     "mocha": "~1.17.0"
