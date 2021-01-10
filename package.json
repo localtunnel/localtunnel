@@ -18,7 +18,7 @@
     "lt": "./bin/lt.js"
   },
   "scripts": {
-    "test": "mocha --ui qunit --reporter list --timeout 60000 -- *.spec.js"
+    "test": "mocha --reporter list --timeout 60000 -- *.spec.js"
   },
   "dependencies": {
     "axios": "0.21.1",
@@ -27,7 +27,7 @@
     "yargs": "16.2.0"
   },
   "devDependencies": {
-    "mocha": "~1.17.0"
+    "mocha": "~8.2.1"
   },
   "engines": {
     "node": ">=8.3.0"
