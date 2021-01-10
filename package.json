@@ -1,7 +1,7 @@
 {
   "name": "localtunnel",
   "description": "Expose localhost to the world",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -15,7 +15,7 @@
   ],
   "main": "./localtunnel.js",
   "bin": {
-    "lt": "./bin/lt.js"
+    "lt": "bin/lt.js"
   },
   "scripts": {
     "test": "mocha --reporter list --timeout 60000 -- *.spec.js"

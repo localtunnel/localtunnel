@@ -1,3 +1,7 @@
+# 2.0.1 (2021-01-09)
+
+- Upgrade dependencies
+
 # 2.0.0 (2019-09-16)
 
 - Add support for tunneling a local HTTPS server
