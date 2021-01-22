@@ -39,9 +39,9 @@ PORT=3000 lt
 
 The localtunnel client is also usable through an API (for test integration, automation, etc)
 
-### localtunnel({ port, ...options })
+### localtunnel(port [,options][,callback])
 
-Creates a new localtunnel to the specified local `port`. Will return a Promise that resolves once you have been assigned a public localtunnel url. `options` can be used to request a specific `subdomain`.
+Creates a new localtunnel to the specified local `port`. Will return a Promise that resolves once you have been assigned a public localtunnel url. `options` can be used to request a specific `subdomain`. A `callback` function can be passed, in which case it won't return a Promise. This exists for backwards compatibility with the old Node-style callback API. You may also pass a single options object with `port` as a property.
 
 ```js
 const localtunnel = require('@chromaui/localtunnel');
@@ -59,11 +59,19 @@ const localtunnel = require('@chromaui/localtunnel');
 })();
 ```
 
-### options
+#### options
 
-- `port` [required] The local port number to expose through localtunnel.
-- `subdomain` A _string_ value requesting a specific subdomain on the proxy server. **Note** You may not actually receive this name depending on availability.
-- `local_host` Proxy to this hostname instead of `localhost`. This will also cause the `Host` header to be re-written to this value in proxied requests.
+- `port` (number) [required] The local port number to expose through localtunnel.
+- `subdomain` (string) Request a specific subdomain on the proxy server. **Note** You may not actually receive this name depending on availability.
+- `host` (string) URL for the upstream proxy server. Defaults to `https://localtunnel.me`.
+- `local_host` (string) Proxy to this hostname instead of `localhost`. This will also cause the `Host` header to be re-written to this value in proxied requests.
+- `local_https` (boolean) Enable tunneling to local HTTPS server.
+- `local_cert` (string) Path to certificate PEM file for local HTTPS server.
+- `local_key` (string) Path to certificate key file for local HTTPS server.
+- `local_ca` (string) Path to certificate authority file for self-signed certificates.
+- `allow_invalid_cert` (boolean) Disable certificate checks for your local HTTPS server (ignore cert/key/ca options).
+
+Refer to [tls.createSecureContext](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options) for details on the certificate options.
 
 ### Tunnel
 
@@ -88,6 +96,8 @@ Clients in other languages
 _go_ [gotunnelme](https://github.com/NoahShen/gotunnelme)
 
 _go_ [go-localtunnel](https://github.com/localtunnel/go-localtunnel)
+
+_C#/.NET_ [localtunnel-client](https://github.com/angelobreuer/localtunnel-client)
 
 ## server
 
