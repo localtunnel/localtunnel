@@ -101,4 +101,12 @@ if (typeof argv.port !== 'number') {
       console.log(new Date().toString(), info.method, info.path);
     });
   }
+  
+  tunnel.on("close", () => {
+    console.log("Tunnel closed. Exiting");
+    process.exit();
+  });
+  process.on("SIGINT", function () {
+    tunnel.close();
+  });
 })();
