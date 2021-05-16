@@ -88,6 +88,7 @@ const localtunnel = require('localtunnel');
 - `host` (string) URL for the upstream proxy server. Defaults to `https://localtunnel.me`.
 - `local_host` (string) Proxy to this hostname instead of `localhost`. This will also cause the `Host` header to be re-written to this value in proxied requests.
 - `local_https` (boolean) Enable tunneling to local HTTPS server.
+- `remote_ip` (string) IP address of the local server, default to `local_host`.
 - `local_cert` (string) Path to certificate PEM file for local HTTPS server.
 - `local_key` (string) Path to certificate key file for local HTTPS server.
 - `local_ca` (string) Path to certificate authority file for self-signed certificates.
