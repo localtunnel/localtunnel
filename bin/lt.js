@@ -42,6 +42,14 @@ const { argv } = yargs
   .option('allow-invalid-cert', {
     describe: 'Disable certificate checks for your local HTTPS server (ignore cert/key/ca options)',
   })
+  .option('socks-host', {
+    describe: 'Socks proxy hostname',
+    implies: 'socks-port'
+  })
+  .option('socks-port', {
+    describe: 'Socks proxy port',
+    implies: 'socks-host'
+  })
   .options('o', {
     alias: 'open',
     describe: 'Opens the tunnel URL in your browser',
@@ -73,6 +81,8 @@ if (typeof argv.port !== 'number') {
     local_key: argv.localKey,
     local_ca: argv.localCa,
     allow_invalid_cert: argv.allowInvalidCert,
+    socks_host: argv.socksHost,
+    socks_port: argv.socksPort,
   }).catch(err => {
     throw err;
   });

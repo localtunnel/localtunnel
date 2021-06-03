@@ -84,6 +84,8 @@ const localtunnel = require('localtunnel');
 - `local_key` (string) Path to certificate key file for local HTTPS server.
 - `local_ca` (string) Path to certificate authority file for self-signed certificates.
 - `allow_invalid_cert` (boolean) Disable certificate checks for your local HTTPS server (ignore cert/key/ca options).
+- `socks_host` (string) Define socks host for use of socks proxy for localtunnel server connection
+- `socks_port` (string) Define socks port for use of socks proxy for localtunnel server connection
 
 Refer to [tls.createSecureContext](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options) for details on the certificate options.
 
