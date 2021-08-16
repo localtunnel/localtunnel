@@ -78,12 +78,12 @@ const localtunnel = require('localtunnel');
 - `port` (number) [required] The local port number to expose through localtunnel.
 - `subdomain` (string) Request a specific subdomain on the proxy server. **Note** You may not actually receive this name depending on availability.
 - `host` (string) URL for the upstream proxy server. Defaults to `https://localtunnel.me`.
-- `local_host` (string) Proxy to this hostname instead of `localhost`. This will also cause the `Host` header to be re-written to this value in proxied requests.
-- `local_https` (boolean) Enable tunneling to local HTTPS server.
-- `local_cert` (string) Path to certificate PEM file for local HTTPS server.
-- `local_key` (string) Path to certificate key file for local HTTPS server.
-- `local_ca` (string) Path to certificate authority file for self-signed certificates.
-- `allow_invalid_cert` (boolean) Disable certificate checks for your local HTTPS server (ignore cert/key/ca options).
+- `local-host` (string) Proxy to this hostname instead of `localhost`. This will also cause the `Host` header to be re-written to this value in proxied requests.
+- `local-https` (boolean) Enable tunneling to local HTTPS server.
+- `local-cert` (string) Path to certificate PEM file for local HTTPS server.
+- `local-key` (string) Path to certificate key file for local HTTPS server.
+- `local-ca` (string) Path to certificate authority file for self-signed certificates.
+- `allow-invalid-cert` (boolean) Disable certificate checks for your local HTTPS server (ignore cert/key/ca options).
 
 Refer to [tls.createSecureContext](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options) for details on the certificate options.
 
