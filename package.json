@@ -24,6 +24,9 @@
     "axios": "0.21.4",
     "debug": "4.3.1",
     "openurl": "1.1.1",
+    "socks5-client": "^1.2.8",
+    "socks5-http-client": "^1.0.4",
+    "socks5-https-client": "^1.2.1",
     "yargs": "16.2.0"
   },
   "devDependencies": {
