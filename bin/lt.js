@@ -23,6 +23,10 @@ const { argv } = yargs
     alias: 'subdomain',
     describe: 'Request this subdomain',
   })
+  .option('a', {
+    alias: 'local-address',
+    describe: 'Local http(s) server address',
+  })
   .option('l', {
     alias: 'local-host',
     describe: 'Tunnel traffic to this host instead of localhost, override Host header to this host',
@@ -41,6 +45,9 @@ const { argv } = yargs
   })
   .option('allow-invalid-cert', {
     describe: 'Disable certificate checks for your local HTTPS server (ignore cert/key/ca options)',
+  })
+  .option('jwt', {
+    describe: 'Client JSON Web Tokens (JWT) filename',
   })
   .options('o', {
     alias: 'open',
@@ -67,11 +74,14 @@ if (typeof argv.port !== 'number') {
     port: argv.port,
     host: argv.host,
     subdomain: argv.subdomain,
+    remote_ip: argv.remoteIp,
     local_host: argv.localHost,
+    local_address: argv.localAddress,
     local_https: argv.localHttps,
     local_cert: argv.localCert,
     local_key: argv.localKey,
     local_ca: argv.localCa,
+    jwt: argv.jwt,
     allow_invalid_cert: argv.allowInvalidCert,
   }).catch(err => {
     throw err;
