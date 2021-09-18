@@ -1,4 +1,4 @@
-# Unreleased
+# 2.0.2 (2021-09-18)
 
 - Upgrade dependencies
 
