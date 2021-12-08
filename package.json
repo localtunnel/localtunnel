@@ -1,7 +1,7 @@
 {
   "name": "localtunnel",
   "description": "Expose localhost to the world",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -21,13 +21,13 @@
     "test": "mocha --reporter list --timeout 60000 -- *.spec.js"
   },
   "dependencies": {
-    "axios": "0.21.1",
-    "debug": "4.3.1",
+    "axios": "0.21.4",
+    "debug": "4.3.2",
     "openurl": "1.1.1",
-    "yargs": "16.2.0"
+    "yargs": "17.1.1"
   },
   "devDependencies": {
-    "mocha": "~8.2.1"
+    "mocha": "~9.1.1"
   },
   "engines": {
     "node": ">=8.3.0"
