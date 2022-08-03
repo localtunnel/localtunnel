@@ -113,7 +113,7 @@ _go_ [go-localtunnel](https://github.com/localtunnel/go-localtunnel)
 
 _C#/.NET_ [localtunnel-client](https://github.com/angelobreuer/localtunnel-client)
 
-_Rust_ (rlt)(https://github.com/kaichaosun/rlt)
+_Rust_ [rlt](https://github.com/kaichaosun/rlt)
 
 ## server
 
