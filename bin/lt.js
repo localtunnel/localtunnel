@@ -3,6 +3,7 @@
 
 const openurl = require('openurl');
 const yargs = require('yargs');
+const qrcode = require('qrcode-terminal');
 
 const localtunnel = require('../localtunnel');
 const { version } = require('../package');
@@ -81,6 +82,7 @@ if (typeof argv.port !== 'number') {
     throw err;
   });
 
+  qrcode.generate(tunnel.url);
   console.log('your url is: %s', tunnel.url);
 
   /**
