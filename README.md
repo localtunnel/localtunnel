@@ -49,6 +49,26 @@ You may also specify arguments via env variables. E.x.
 PORT=3000 lt
 ```
 
+## Authentication (Basic auth)
+
+Provide basic auth token if your web server requires authorization.
+
+### login
+
+Save the credentials with <username> and <password> for specified host to the `~/.ltrc` file. If no host is specified, the default host will be used (`https://localtunnel.me`).
+
+```
+lt login https://lt.example.com
+```
+
+### logout
+
+Remove the credentials for specified host from the `~/.ltrc` file.
+
+```
+lt logout https://lt.example.com
+```
+
 ## API
 
 The localtunnel client is also usable through an API (for test integration, automation, etc)
