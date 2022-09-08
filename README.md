@@ -121,4 +121,4 @@ See [localtunnel/server](//github.com/localtunnel/server) for details on the ser
 
 ## License
 
-MIT
+[MIT](LICENSE)
