@@ -111,7 +111,7 @@ _go_ [gotunnelme](https://github.com/NoahShen/gotunnelme)
 
 _go_ [go-localtunnel](https://github.com/localtunnel/go-localtunnel)
 
-_C#/.NET_ [localtunnel-client](https://github.com/angelobreuer/localtunnel-client)
+_C#/.NET_ [localtunnel-client](https://github.com/angelobreuer/localtunnel.net)
 
 _Rust_ [rlt](https://github.com/kaichaosun/rlt)
 
