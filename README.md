@@ -41,7 +41,7 @@ You can restart your local server all you want, `lt` is smart enough to detect t
 Below are some common arguments. See `lt --help` for additional arguments
 
 - `--subdomain` request a named subdomain on the localtunnel server (default is random characters)
-- `--localHhost` proxy to a hostname other than localhost
+- `--localHost` proxy to a hostname other than localhost
 
 You may also specify arguments via env variables. E.x.
 
