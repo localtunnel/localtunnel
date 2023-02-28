@@ -41,7 +41,7 @@ You can restart your local server all you want, `lt` is smart enough to detect t
 Below are some common arguments. See `lt --help` for additional arguments
 
 - `--subdomain` request a named subdomain on the localtunnel server (default is random characters)
-- `--local-host` proxy to a hostname other than localhost
+- `--localHost` proxy to a hostname other than localhost
 
 You may also specify arguments via env variables. E.x.
 
@@ -78,12 +78,12 @@ const localtunnel = require('localtunnel');
 - `port` (number) [required] The local port number to expose through localtunnel.
 - `subdomain` (string) Request a specific subdomain on the proxy server. **Note** You may not actually receive this name depending on availability.
 - `host` (string) URL for the upstream proxy server. Defaults to `https://localtunnel.me`.
-- `local_host` (string) Proxy to this hostname instead of `localhost`. This will also cause the `Host` header to be re-written to this value in proxied requests.
-- `local_https` (boolean) Enable tunneling to local HTTPS server.
-- `local_cert` (string) Path to certificate PEM file for local HTTPS server.
-- `local_key` (string) Path to certificate key file for local HTTPS server.
-- `local_ca` (string) Path to certificate authority file for self-signed certificates.
-- `allow_invalid_cert` (boolean) Disable certificate checks for your local HTTPS server (ignore cert/key/ca options).
+- `localHost` (string) Proxy to this hostname instead of `localhost`. This will also cause the `Host` header to be re-written to this value in proxied requests.
+- `localHttps` (boolean) Enable tunneling to local HTTPS server.
+- `localCert` (string) Path to certificate PEM file for local HTTPS server.
+- `localKey` (string) Path to certificate key file for local HTTPS server.
+- `localCa` (string) Path to certificate authority file for self-signed certificates.
+- `allowInvalidCert` (boolean) Disable certificate checks for your local HTTPS server (ignore cert/key/ca options).
 
 Refer to [tls.createSecureContext](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options) for details on the certificate options.
 

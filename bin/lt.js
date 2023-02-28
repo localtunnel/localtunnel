@@ -24,22 +24,22 @@ const { argv } = yargs
     describe: 'Request this subdomain',
   })
   .option('l', {
-    alias: 'local-host',
+    alias: 'localHost',
     describe: 'Tunnel traffic to this host instead of localhost, override Host header to this host',
   })
-  .option('local-https', {
+  .option('localHttps', {
     describe: 'Tunnel traffic to a local HTTPS server',
   })
-  .option('local-cert', {
+  .option('localCert', {
     describe: 'Path to certificate PEM file for local HTTPS server',
   })
-  .option('local-key', {
+  .option('localKey', {
     describe: 'Path to certificate key file for local HTTPS server',
   })
-  .option('local-ca', {
+  .option('localCa', {
     describe: 'Path to certificate authority file for self-signed certificates',
   })
-  .option('allow-invalid-cert', {
+  .option('allowInvalidCert', {
     describe: 'Disable certificate checks for your local HTTPS server (ignore cert/key/ca options)',
   })
   .options('o', {
@@ -50,8 +50,8 @@ const { argv } = yargs
     describe: 'Print basic request info',
   })
   .require('port')
-  .boolean('local-https')
-  .boolean('allow-invalid-cert')
+  .boolean('localHttps')
+  .boolean('allowInvalidCert')
   .boolean('print-requests')
   .help('help', 'Show this help and exit')
   .version(version);
