@@ -15,7 +15,8 @@
   ],
   "main": "./localtunnel.js",
   "bin": {
-    "lt": "bin/lt.js"
+    "lt": "bin/lt.js",
+    "localtunnel": "bin/lt.js"
   },
   "scripts": {
     "test": "mocha --reporter list --timeout 60000 -- *.spec.js"
