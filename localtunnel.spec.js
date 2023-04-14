@@ -10,8 +10,9 @@ const localtunnel = require('./localtunnel');
 
 let fakePort;
 
-before(done => {
-  const server = http.createServer();
+before(async () => {
+  const { promise, done } = defer();
+  const server = http.createServer().unref();
   server.on('request', (req, res) => {
     res.write(req.headers.host);
     res.end();
@@ -21,11 +22,14 @@ before(done => {
     fakePort = port;
     done();
   });
+  return promise;
 });
 
-it('query localtunnel server w/ ident', async done => {
+it('query localtunnel server w/ ident', async () => {
+  const { promise, done } = defer();
+
   const tunnel = await localtunnel({ port: fakePort });
-  assert.ok(new RegExp('^https://.*localtunnel.me$').test(tunnel.url));
+  assert.ok(new RegExp('^https://.*(localtunnel\.me|loca\.lt)$').test(tunnel.url));
 
   const parsed = url.parse(tunnel.url);
   const opt = {
@@ -44,13 +48,46 @@ it('query localtunnel server w/ ident', async done => {
     });
 
     res.on('end', () => {
-      assert(/.*[.]localtunnel[.]me/.test(body), body);
+      assert(/.*(localtunnel\.me|loca\.lt)/.test(body), body);
       tunnel.close();
       done();
     });
   });
 
   req.end();
+  return promise;
+});
+
+it('allows to validate the request', async () => {
+  const { promise, done } = defer();
+
+  const tunnel = await localtunnel({ port: fakePort, validate: (req) => req.path !== '/invalid' });
+
+  const parsed = url.parse(tunnel.url);
+  const opt = {
+    host: parsed.host,
+    port: 443,
+    headers: { host: parsed.hostname },
+    path: '/invalid',
+  };
+
+  const req = https.request(opt, res => {
+    res.setEncoding('utf8');
+    let body = '';
+
+    res.on('data', chunk => {
+      body += chunk;
+    });
+
+    res.on('end', () => {
+      assert(res.statusCode === 403, res.statusCode);
+      tunnel.close();
+      done();
+    });
+  });
+
+  req.end();
+  return promise;
 });
 
 it('request specific domain', async () => {
@@ -58,14 +95,16 @@ it('request specific domain', async () => {
     .toString(36)
     .substr(2);
   const tunnel = await localtunnel({ port: fakePort, subdomain });
-  assert.ok(new RegExp(`^https://${subdomain}.localtunnel.me$`).test(tunnel.url));
+  assert.ok(new RegExp(`^https://${subdomain}.(localtunnel\.me|loca\.lt)$`).test(tunnel.url));
   tunnel.close();
 });
 
 describe('--local-host localhost', () => {
-  it('override Host header with local-host', async done => {
+  it('override Host header with local-host', async () => {
+    const { promise, done } = defer();
+
     const tunnel = await localtunnel({ port: fakePort, local_host: 'localhost' });
-    assert.ok(new RegExp('^https://.*localtunnel.me$').test(tunnel.url));
+    assert.ok(new RegExp('^https://.*(localtunnel\.me|loca\.lt)$').test(tunnel.url));
 
     const parsed = url.parse(tunnel.url);
     const opt = {
@@ -91,13 +130,16 @@ describe('--local-host localhost', () => {
     });
 
     req.end();
+    return promise;
   });
 });
 
 describe('--local-host 127.0.0.1', () => {
-  it('override Host header with local-host', async done => {
+  it('override Host header with local-host', async () => {
+    const { promise, done } = defer();
+
     const tunnel = await localtunnel({ port: fakePort, local_host: '127.0.0.1' });
-    assert.ok(new RegExp('^https://.*localtunnel.me$').test(tunnel.url));
+    assert.ok(new RegExp('^https://.*(localtunnel\.me|loca\.lt)$').test(tunnel.url));
 
     const parsed = url.parse(tunnel.url);
     const opt = {
@@ -125,11 +167,14 @@ describe('--local-host 127.0.0.1', () => {
     });
 
     req.end();
+    return promise;
   });
 
-  it('send chunked request', async done => {
+  it('send chunked request', async () => {
+    const { promise, done } = defer();
+
     const tunnel = await localtunnel({ port: fakePort, local_host: '127.0.0.1' });
-    assert.ok(new RegExp('^https://.*localtunnel.me$').test(tunnel.url));
+    assert.ok(new RegExp('^https://.*(localtunnel\.me|loca\.lt)$').test(tunnel.url));
 
     const parsed = url.parse(tunnel.url);
     const opt = {
@@ -158,5 +203,14 @@ describe('--local-host 127.0.0.1', () => {
     });
 
     req.end(crypto.randomBytes(1024 * 8).toString('base64'));
+    return promise;
   });
 });
+
+function defer() {
+  let done;
+  const promise = new Promise(resolve => {
+    done = resolve;
+  });
+  return { promise, done };
+}

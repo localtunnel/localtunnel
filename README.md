@@ -84,6 +84,7 @@ const localtunnel = require('localtunnel');
 - `local_key` (string) Path to certificate key file for local HTTPS server.
 - `local_ca` (string) Path to certificate authority file for self-signed certificates.
 - `allow_invalid_cert` (boolean) Disable certificate checks for your local HTTPS server (ignore cert/key/ca options).
+- `validate` (function) If passed, this function will be called with `{ method: string; path: string }` argument before the request is proxied. If it returns false, then the request will be rejected with `503 Forbidden` code. This allows to do e.g. paths allow-listing and expose only some of the URLs to the public internet. 
 
 Refer to [tls.createSecureContext](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options) for details on the certificate options.
 
@@ -91,11 +92,11 @@ Refer to [tls.createSecureContext](https://nodejs.org/api/tls.html#tls_tls_creat
 
 The `tunnel` instance returned to your callback emits the following events
 
-| event   | args | description                                                                          |
-| ------- | ---- | ------------------------------------------------------------------------------------ |
-| request | info | fires when a request is processed by the tunnel, contains _method_ and _path_ fields |
-| error   | err  | fires when an error happens on the tunnel                                            |
-| close   |      | fires when the tunnel has closed                                                     |
+| event   | args | description                                                                                     |
+| ------- | ---- | ----------------------------------------------------------------------------------------------- |
+| request | info | fires when a request is processed by the tunnel, contains _method_, _path_ and _isValid_ fields |
+| error   | err  | fires when an error happens on the tunnel                                                       |
+| close   |      | fires when the tunnel has closed                                                                |
 
 The `tunnel` instance has the following methods
 
