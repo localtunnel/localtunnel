@@ -42,6 +42,9 @@ const { argv } = yargs
   .option('allow-invalid-cert', {
     describe: 'Disable certificate checks for your local HTTPS server (ignore cert/key/ca options)',
   })
+  .option('paths', {
+    describe: 'Only allow requests to the specified path prefixes (comma-separated)',
+  })
   .options('o', {
     alias: 'open',
     describe: 'Opens the tunnel URL in your browser',
@@ -73,6 +76,9 @@ if (typeof argv.port !== 'number') {
     local_key: argv.localKey,
     local_ca: argv.localCa,
     allow_invalid_cert: argv.allowInvalidCert,
+    validate: ({ path }) => argv.paths 
+      ? argv.paths.split(/\s*,\s*/).some(p => path.startsWith(p))
+      : true,
   }).catch(err => {
     throw err;
   });
