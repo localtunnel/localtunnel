@@ -25,7 +25,10 @@ const { argv } = yargs
   })
   .option('l', {
     alias: 'local-host',
-    describe: 'Tunnel traffic to this host instead of localhost, override Host header to this host',
+    describe: 'Tunnel traffic to this host instead of localhost',
+  })
+  .option('local-hostname', {
+    describe: 'Rewrites the HTTP Host header going to the local server',
   })
   .option('local-https', {
     describe: 'Tunnel traffic to a local HTTPS server',
@@ -68,6 +71,7 @@ if (typeof argv.port !== 'number') {
     host: argv.host,
     subdomain: argv.subdomain,
     local_host: argv.localHost,
+    local_hostname: argv.localHostname,
     local_https: argv.localHttps,
     local_cert: argv.localCert,
     local_key: argv.localKey,
