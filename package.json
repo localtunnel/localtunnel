@@ -21,13 +21,14 @@
     "test": "mocha --reporter list --timeout 60000 -- *.spec.js"
   },
   "dependencies": {
-    "axios": "0.21.4",
-    "debug": "4.3.2",
+    "axios": "1.9.0",
+    "debug": "4.4.1",
     "openurl": "1.1.1",
-    "yargs": "17.1.1"
+    "yargs": "17.7.2",
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
-    "mocha": "~9.1.1"
+    "mocha": "11.2.2"
   },
   "engines": {
     "node": ">=8.3.0"

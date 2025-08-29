@@ -48,6 +48,11 @@ Below are some common arguments. See `lt --help` for additional arguments
 
 - `--subdomain` request a named subdomain on the localtunnel server (default is random characters)
 - `--local-host` proxy to a hostname other than localhost
+- `--max-reconnect` maximum number of reconnection attempts (default is 10)
+- `--reconnect-backoff` initial delay in ms between reconnection attempts (doubles with each attempt, default is 1000ms)
+- `--detailed-logs` enable detailed request logging with timestamps and headers
+- `--status-monitor` display periodic connection status updates
+- `--request-log-size` maximum number of requests to keep in memory (default is 100)
 
 You may also specify arguments via env variables. E.x.
 
@@ -73,6 +78,20 @@ const localtunnel = require('localtunnel');
   // i.e. https://abcdefgjhij.localtunnel.me
   tunnel.url;
 
+  // the current status of the tunnel
+  const status = tunnel.getStatus();
+  console.log(status.status); // 'connected'
+
+  tunnel.on('status', (status) => {
+    // status updates emitted periodically
+    console.log(`Status: ${status.status}, Last activity: ${status.lastActive}`);
+  });
+
+  tunnel.on('request', (info) => {
+    // requests going through the tunnel
+    console.log(`${info.method} ${info.path}`);
+  });
+
   tunnel.on('close', () => {
     // tunnels are closed
   });
@@ -90,6 +109,9 @@ const localtunnel = require('localtunnel');
 - `local_key` (string) Path to certificate key file for local HTTPS server.
 - `local_ca` (string) Path to certificate authority file for self-signed certificates.
 - `allow_invalid_cert` (boolean) Disable certificate checks for your local HTTPS server (ignore cert/key/ca options).
+- `maxReconnectAttempts` (number) Maximum number of reconnection attempts (default: 10).
+- `reconnectBackoff` (number) Initial delay in ms between reconnection attempts - doubles with each attempt (default: 1000ms).
+- `maxRequestLogSize` (number) Maximum number of requests to keep in log history (default: 100).
 
 Refer to [tls.createSecureContext](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options) for details on the certificate options.
 
@@ -97,17 +119,24 @@ Refer to [tls.createSecureContext](https://nodejs.org/api/tls.html#tls_tls_creat
 
 The `tunnel` instance returned to your callback emits the following events
 
-| event   | args | description                                                                          |
-| ------- | ---- | ------------------------------------------------------------------------------------ |
-| request | info | fires when a request is processed by the tunnel, contains _method_ and _path_ fields |
-| error   | err  | fires when an error happens on the tunnel                                            |
-| close   |      | fires when the tunnel has closed                                                     |
+| event           | args | description                                                                          |
+| --------------- | ---- | ------------------------------------------------------------------------------------ |
+| request         | info | fires when a request is processed by the tunnel, contains _method_, _path_, _id_ and _timestamp_ fields |
+| error           | err  | fires when an error happens on the tunnel                                            |
+| close           |      | fires when the tunnel has closed                                                     |
+| connecting      |      | fires when the tunnel is attempting to connect                                       |
+| connected       | info | fires when the tunnel is successfully connected, contains _url_ field               |
+| reconnecting    | info | fires when tunnel is attempting to reconnect, contains _attempt_ and _delay_ fields |
+| reconnected     | info | fires when tunnel has successfully reconnected, contains _url_ field                |
+| reconnect_error | err  | fires when there's an error during reconnection                                     |
+| status          | info | fires periodically with status information                                           |
 
 The `tunnel` instance has the following methods
 
-| method | args | description      |
-| ------ | ---- | ---------------- |
-| close  |      | close the tunnel |
+| method    | args | description                                                                |
+| --------- | ---- | -------------------------------------------------------------------------- |
+| close     |      | close the tunnel                                                           |
+| getStatus |      | get the current status of the tunnel including connection state and stats  |
 
 ## other clients
 
