@@ -16,8 +16,7 @@ const { argv } = yargs
   })
   .option('h', {
     alias: 'host',
-    describe: 'Upstream server providing forwarding',
-    default: 'https://localtunnel.me',
+    describe: 'Upstream server providing forwarding'
   })
   .option('s', {
     alias: 'subdomain',
@@ -49,6 +48,9 @@ const { argv } = yargs
   .option('print-requests', {
     describe: 'Print basic request info',
   })
+  .option('headers',{
+    describe: 'key=value headers added to the requests sent to localtunnel server support multiple by comma separated'
+  })
   .require('port')
   .boolean('local-https')
   .boolean('allow-invalid-cert')
@@ -73,6 +75,7 @@ if (typeof argv.port !== 'number') {
     local_key: argv.localKey,
     local_ca: argv.localCa,
     allow_invalid_cert: argv.allowInvalidCert,
+    headers:argv.headers
   }).catch(err => {
     throw err;
   });
