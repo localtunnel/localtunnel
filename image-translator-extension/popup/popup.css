@@ -1,0 +1,89 @@
+body {
+  font-family: sans-serif;
+  width: 350px;
+  padding: 15px;
+  background-color: #f4f4f4;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+  margin-top: 0;
+}
+
+.setting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+label {
+  font-weight: bold;
+}
+
+select, input[type="number"], input[type="color"] {
+  width: 150px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button.secondary {
+    background-color: #6c757d;
+}
+
+button.secondary:hover {
+    background-color: #5a6268;
+}
+
+hr {
+  margin: 20px 0;
+  border: 0;
+  border-top: 1px solid #ccc;
+}
+
+#history-container {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 10px;
+  background-color: #fff;
+}
+
+.history-item {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}
+
+.history-item .text {
+    font-style: italic;
+    color: #555;
+}
+
+.history-item .translation {
+    font-weight: bold;
+}

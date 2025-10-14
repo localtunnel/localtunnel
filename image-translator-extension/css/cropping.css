@@ -1,0 +1,46 @@
+#cropping-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  cursor: crosshair;
+}
+
+#cropping-selection {
+  position: absolute;
+  border: 2px dashed #fff;
+  box-sizing: border-box;
+}
+
+.translated-text-container {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ccc;
+  color: black;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 10000;
+  padding: 10px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.translated-text-container .close-btn {
+  position: absolute;
+  top: 2px;
+  right: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  color: #888;
+}
+.translated-text-container .close-btn:hover {
+    color: #000;
+}

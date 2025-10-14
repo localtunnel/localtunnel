@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Image Translator</title>
+  <link rel="stylesheet" type="text/css" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Cài đặt Dịch</h2>
+    <div class="setting">
+      <label for="source-lang">Ngôn ngữ nguồn:</label>
+      <select id="source-lang">
+        <option value="auto">Tự động phát hiện</option>
+        <option value="eng">Tiếng Anh</option>
+        <option value="jpn">Tiếng Nhật</option>
+        <option value="kor">Tiếng Hàn</option>
+        <option value="rus">Tiếng Nga</option>
+        <option value="chi_sim">Tiếng Trung (Giản thể)</option>
+      </select>
+    </div>
+    <div class="setting">
+      <label for="target-lang">Ngôn ngữ đích:</label>
+      <select id="target-lang">
+        <option value="vi">Tiếng Việt</option>
+      </select>
+    </div>
+
+    <hr>
+
+    <h2>Cài đặt Font</h2>
+    <div class="setting">
+      <label for="font-family">Font:</label>
+      <select id="font-family">
+        <option value="Arial, sans-serif">Arial</option>
+        <option value="Verdana, sans-serif">Verdana</option>
+        <option value="Georgia, serif">Georgia</option>
+        <option value="'Times New Roman', Times, serif">Times New Roman</option>
+      </select>
+    </div>
+    <div class="setting">
+      <label for="font-size">Cỡ chữ:</label>
+      <input type="number" id="font-size" value="16" min="8" max="72">
+    </div>
+    <div class="setting">
+      <label for="font-color">Màu chữ:</label>
+      <input type="color" id="font-color" value="#000000">
+    </div>
+    <button id="save-settings">Lưu Cài đặt</button>
+    <button id="undo-translation" class="secondary">Hoàn tác bản dịch cuối cùng</button>
+
+    <hr>
+
+    <h2>Lịch sử Dịch</h2>
+    <div id="history-container">
+      <!-- Translation history will be populated here -->
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
